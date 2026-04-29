@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  {% if active_category %}{{ active_category.name }} – Lavus Fashions{% else %}Shop All – Lavus Fashions{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container lf-section">
+
+  <!-- Page Header -->
+  <div class="lf-page-header text-center mb-4">
+    <p class="lf-section-tag">Our Collection</p>
+    <h1 class="lf-section-title">
+      {% if active_category %}{{ active_category.name }}{% else %}Shop All{% endif %}
+    </h1>
+    <div class="lf-divider mx-auto"></div>
+    {% if active_category and active_category.description %}
+    <p class="text-muted mt-3 mb-0">{{ active_category.description }}</p>
+    {% endif %}
+  </div>
+
+  <!-- ===== CATEGORY FILTER PILLS ===== -->
+  {% if categories %}
+  <div class="lf-cat-filter-wrap mb-4">
+    <div class="lf-cat-pills d-flex flex-wrap gap-2 justify-content-center">
+      <a href="{% url 'product_list' %}"
+         class="lf-cat-pill {% if not active_category %}active{% endif %}">
+        <i class="bi bi-grid me-1"></i> All
+      </a>
+      {% for cat in categories %}
+      <a href="{% url 'category_detail' cat.slug %}"
+         class="lf-cat-pill {% if active_category.slug == cat.slug %}active{% endif %}">
+        {{ cat.name }}
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Product count -->
+  <p class="text-muted text-center mb-4" style="font-size:0.88rem;">
+    {{ products|length }} product{{ products|length|pluralize }} found
+    {% if active_category %}in <strong>{{ active_category.name }}</strong>{% endif %}
+  </p>
+
+  {% if products %}
+  <div class="row g-3 g-md-4">
+    {% for product in products %}
+    <div class="col-6 col-md-4 col-lg-3">
+      <a href="{% url 'product_detail' product.slug %}" class="lf-product-card-link">
+        <div class="lf-product-card">
+          <div class="lf-product-img-wrap">
+            {% with img=product.get_primary_image %}
+            {% if img %}
+            <img src="{{ img.image.url }}" alt="{{ product.name }}" class="lf-product-img" loading="lazy" />
+            {% else %}
+            <div class="lf-product-img-placeholder"><i class="bi bi-image"></i></div>
+            {% endif %}
+            {% endwith %}
+            {% if product.category %}
+            <span class="lf-product-badge">{{ product.category.name }}</span>
+            {% endif %}
+            <div class="lf-product-overlay">
+              <span class="lf-view-btn">View Product</span>
+            </div>
+          </div>
+          <div class="lf-product-info">
+            <h3 class="lf-product-name">{{ product.name }}</h3>
+            <p class="lf-product-price">₹{{ product.price }}</p>
+            <div class="lf-size-chips">
+              {% for variant in product.variants.all %}
+              <span class="lf-size-chip">{{ variant.size }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-5 lf-empty">
+    <i class="bi bi-bag-x lf-empty-icon"></i>
+    <h3>No products found</h3>
+    <p class="text-muted">
+      {% if active_category %}
+      No products in <strong>{{ active_category.name }}</strong> yet. Check back soon!
+      {% else %}
+      New arrivals coming soon. Follow us on Instagram!
+      {% endif %}
+    </p>
+    <a href="{% url 'product_list' %}" class="btn lf-btn-gold mt-3 px-4">View All Products</a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

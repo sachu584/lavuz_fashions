@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us – Lavauz Fashions{% endblock %}
+
+{% block content %}
+<!-- ===== ABOUT HERO ===== -->
+<section class="lf-section pb-0">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <p class="lf-section-tag">Our Story</p>
+        <h1 class="lf-section-title display-4">Since 2020</h1>
+        <div class="lf-divider mb-4"></div>
+        <p class="lead text-dark mb-4">Founded by <strong>Lavanya Lal</strong>, Lavauz Fashions is more than just a brand – it's a celebration of fearless style and timeless elegance.</p>
+        <p class="text-muted">What started as a passion project in 2020 has grown into a curated destination for those who appreciate the finer details of fashion. Our mission is to provide premium quality Kerala wears, Sarees, and Western collections that make every woman feel confident and beautiful.</p>
+        <div class="row g-4 mt-4">
+          <div class="col-sm-6">
+            <h4 class="fw-bold mb-2">Quality First</h4>
+            <p class="small text-muted">We handpick every fabric and design to ensure you get only the best.</p>
+          </div>
+          <div class="col-sm-6">
+            <h4 class="fw-bold mb-2">Fearless Style</h4>
+            <p class="small text-muted">Bold choices for bold personalities. Stand out with Lavauz.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="lf-about-img-wrap">
+          <div class="lf-about-img-overlay"></div>
+          <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop" alt="Lavauz Fashions" class="img-fluid rounded-4 shadow-lg">
+          <div class="lf-founder-badge">
+             <span class="small text-uppercase tracking-wider d-block">Founded by</span>
+             <span class="h5 mb-0 fw-bold">Lavanya Lal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== VALUES SECTION ===== -->
+<section class="lf-section">
+  <div class="container text-center">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <h2 class="lf-section-title">A Vision for Tomorrow</h2>
+        <p class="text-muted mb-5">At Lavauz Fashions, we believe that fashion is the most powerful way to express yourself without saying a word. Our collections are designed to be versatile, comfortable, and always in trend.</p>
+      </div>
+    </div>
+    <div class="row g-4 text-start">
+      <div class="col-md-4">
+        <div class="p-4 border rounded-4 h-100">
+          <i class="bi bi-heart-fill text-gold h1 mb-3 d-block"></i>
+          <h5 class="fw-bold">Crafted with Love</h5>
+          <p class="small text-muted">Every piece is selected with the utmost care, keeping your comfort and style in mind.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-4 border rounded-4 h-100">
+          <i class="bi bi-star-fill text-gold h1 mb-3 d-block"></i>
+          <h5 class="fw-bold">Exclusive Designs</h5>
+          <p class="small text-muted">We pride ourselves on offering unique pieces that you won't find anywhere else.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-4 border rounded-4 h-100">
+          <i class="bi bi-whatsapp text-success h1 mb-3 d-block"></i>
+          <h5 class="fw-bold">Personal Connection</h5>
+          <p class="small text-muted">We love hearing from our customers. DM us or WhatsApp us anytime!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .lf-about-img-wrap {
+    position: relative;
+    padding: 20px;
+  }
+  .lf-about-img-wrap img {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+  }
+  .lf-founder-badge {
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    background: var(--lf-black);
+    color: var(--lf-white);
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    z-index: 2;
+  }
+  .tracking-wider {
+    letter-spacing: 0.15em;
+    color: var(--lf-gold);
+  }
+  .text-gold { color: var(--lf-gold); }
+</style>
+{% endblock %}

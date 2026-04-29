@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Orders – Lavauz Fashions{% endblock %}
+
+{% block extra_head %}
+<style>
+    .order-card {
+        background: #fff;
+        border: 1px solid var(--lf-border);
+        border-radius: var(--lf-radius-lg);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: var(--lf-transition);
+    }
+    .order-card:hover {
+        border-color: var(--lf-gold);
+        box-shadow: var(--lf-shadow);
+    }
+    .status-badge {
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+    .status-pending { background: #fff4e5; color: #b26a00; }
+    .status-confirmed { background: #e8f5e9; color: #2e7d32; }
+    .status-shipped { background: #e3f2fd; color: #1565c0; }
+    .status-delivered { background: #f3e5f5; color: #7b1fa2; }
+    .status-cancelled { background: #ffebee; color: #c62828; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container lf-section">
+    <div class="row align-items-center mb-5">
+        <div class="col-md-6">
+            <p class="lf-section-tag">Purchase History</p>
+            <h1 class="lf-section-title">My Orders</h1>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <a href="{% url 'product_list' %}" class="btn lf-btn-outline px-4">Continue Shopping</a>
+        </div>
+    </div>
+
+    {% if orders %}
+    <div class="row">
+        <div class="col-lg-10">
+            {% for order in orders %}
+            <div class="order-card">
+                <div class="row align-items-center">
+                    <div class="col-md-2 mb-3 mb-md-0">
+                        {% with first_item=order.items.first %}
+                        {% if first_item %}
+                        {% with img=first_item.product.get_primary_image %}
+                        <div style="aspect-ratio: 3/4; border-radius: 8px; overflow: hidden; background: #f8f9fa;">
+                            {% if img %}
+                            <img src="{{ img.image.url }}" class="w-100 h-100 object-fit-cover" alt="{{ first_item.product.name }}">
+                            {% else %}
+                            <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
+                                <i class="bi bi-image" style="font-size: 2rem;"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endwith %}
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="text-muted small me-3">Order #{{ order.id }}</span>
+                            <span class="text-muted small">{{ order.created_at|date:"d M Y" }}</span>
+                        </div>
+                        {% for item in order.items.all %}
+                        <div class="mb-2 border-bottom pb-2">
+                            <h6 class="fw-bold mb-1" style="font-size: 0.95rem;">{{ item.quantity }}x {{ item.product.name }}</h6>
+                            <p class="text-muted small mb-0">Size: <span class="fw-bold text-dark">{{ item.size }}</span> | Price: ₹{{ item.price }}</p>
+                        </div>
+                        {% endfor %}
+                        <div class="d-flex align-items-center mt-3">
+                            <span class="text-muted small me-2">Shipping: ₹{{ order.shipping_charge }}</span>
+                            <span class="text-gold fw-bold ms-auto" style="font-size: 1.1rem;">Total: ₹{{ order.total_amount }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <div class="status-badge status-{{ order.status }} mb-3">
+                            {{ order.get_status_display }}
+                        </div>
+                        <div>
+                            <a href="https://wa.me/{{ WHATSAPP_NUMBER }}?text=Hi, I'd like to check on my order #{{ order.id }}" class="btn btn-sm btn-outline-success px-3">
+                                <i class="bi bi-whatsapp me-2"></i>Inquire
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="bi bi-bag-x text-muted" style="font-size: 4rem;"></i>
+        </div>
+        <h3>No orders found</h3>
+        <p class="text-muted">You haven't placed any orders yet. Start shopping to see them here!</p>
+        <a href="{% url 'product_list' %}" class="btn lf-btn-gold px-5 py-2 mt-3">Browse Products</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

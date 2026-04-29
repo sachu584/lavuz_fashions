@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} – Lavus Fashions{% endblock %}
+
+{% block content %}
+<div class="container lf-section">
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb lf-breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'product_list' %}">Shop</a></li>
+      {% if product.category %}
+      <li class="breadcrumb-item"><a href="{% url 'category_detail' product.category.slug %}">{{ product.category.name }}</a></li>
+      {% endif %}
+      <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-4 g-lg-5">
+
+    <!-- ===== IMAGE GALLERY ===== -->
+    <div class="col-md-6 col-lg-7">
+      <div class="lf-gallery">
+        <div class="lf-main-img-wrap mb-3">
+          {% with img=product.get_primary_image %}
+          <img
+            id="mainImage"
+            src="{% if img %}{{ img.image.url }}{% else %}{% static 'images/placeholder.png' %}{% endif %}"
+            alt="{{ product.name }}"
+            class="lf-main-img"
+          />
+          {% endwith %}
+        </div>
+        {% if images.count > 1 %}
+        <div class="lf-thumbs d-flex gap-2 flex-wrap">
+          {% for image in images %}
+          <button class="lf-thumb-btn {% if image.is_primary %}active{% endif %}"
+            onclick="switchImage(this, '{{ image.image.url }}')" aria-label="View image {{ forloop.counter }}">
+            <img src="{{ image.image.url }}" alt="{{ product.name }} view {{ forloop.counter }}" class="lf-thumb-img" />
+          </button>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- ===== PRODUCT INFO & ORDER FORM ===== -->
+    <div class="col-md-6 col-lg-5">
+      <div class="lf-product-detail">
+        {% if product.category %}
+        <a href="{% url 'category_detail' product.category.slug %}" class="lf-cat-tag-link">
+          <span class="lf-cat-tag">{{ product.category.name }}</span>
+        </a>
+        {% endif %}
+
+        <h1 class="lf-detail-name">{{ product.name }}</h1>
+        <p class="lf-detail-price">₹{{ product.price }}</p>
+        <div class="lf-divider mb-4"></div>
+        <p class="lf-detail-desc">{{ product.description }}</p>
+
+        <!-- ORDER FORM -->
+        <form method="POST" action="{% url 'add_to_cart' product.id %}" id="orderForm">
+          {% csrf_token %}
+
+          {% if variants %}
+            <div class="lf-form-group mb-4">
+              <label class="lf-form-label">Select Size <span class="text-danger">*</span></label>
+              <div class="lf-size-btns d-flex flex-wrap gap-2 mt-2" id="sizeBtns">
+                {% for variant in variants %}
+                <input type="radio" name="size" id="size_{{ variant.size }}" value="{{ variant.size }}" class="d-none lf-size-radio" 
+                       {% if variants.count == 1 and variant.stock > 0 %}checked{% endif %} 
+                       {% if variant.stock <= 0 or not variant.is_available %}disabled{% endif %}
+                       required>
+                <label for="size_{{ variant.size }}" 
+                       class="lf-size-label {% if variants.count == 1 and variant.stock > 0 %}selected{% endif %} {% if variant.stock <= 0 or not variant.is_available %}disabled{% endif %}">
+                  {{ variant.size }}
+                  {% if variant.stock <= 0 or not variant.is_available %}
+                  <small class="d-block text-danger" style="font-size: 0.6rem;">Out of Stock</small>
+                  {% endif %}
+                </label>
+                {% endfor %}
+              </div>
+              <div id="sizeError" class="alert alert-danger p-2 mt-2 d-none" style="font-size: 0.8rem; border-radius: 8px;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>Please select a size first!
+              </div>
+              {% if variants.count > 1 %}
+              <small class="text-muted mt-1 d-block">Click to select your size</small>
+              {% else %}
+              <small class="text-muted mt-1 d-block">Standard size for this product</small>
+              {% endif %}
+            </div>
+          {% else %}
+            <!-- For products like Sarees with no specific variants, default to Free Size -->
+            <input type="hidden" name="size" value="Free Size">
+            <div class="mb-4">
+              <span class="lf-badge bg-light text-dark border"><i class="bi bi-check-circle-fill me-1 text-success"></i>Size: Free Size (Standard)</span>
+            </div>
+          {% endif %}
+
+          <div class="lf-form-group mb-4">
+            <label for="quantity" class="lf-form-label">Quantity</label>
+            <input type="number" id="quantity" name="quantity" class="form-control lf-input" value="1" min="1" style="max-width: 100px;" required />
+          </div>
+
+          <button type="submit" class="btn lf-btn-whatsapp w-100 py-3" id="buyNowBtn" style="background-color: var(--lf-dark); color: white;">
+            <i class="bi bi-cart-plus me-2 fs-5"></i>Add to Cart
+          </button>
+        </form>
+
+        <div class="lf-trust-badges mt-4 d-flex gap-3 flex-wrap">
+          <span class="lf-badge"><i class="bi bi-truck me-1"></i>Fast Delivery</span>
+          <span class="lf-badge"><i class="bi bi-shield-check me-1"></i>Genuine Product</span>
+          <span class="lf-badge"><i class="bi bi-arrow-repeat me-1"></i>Easy Exchange</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== RELATED PRODUCTS ===== -->
+  {% if related %}
+  <div class="lf-related mt-5 pt-4">
+    <div class="text-center mb-4">
+      <p class="lf-section-tag">More from {{ product.category.name }}</p>
+      <h2 class="lf-section-title">You May Also Like</h2>
+      <div class="lf-divider mx-auto"></div>
+    </div>
+    <div class="row g-3 g-md-4">
+      {% for rel in related %}
+      <div class="col-6 col-md-4 col-lg-3">
+        <a href="{% url 'product_detail' rel.slug %}" class="lf-product-card-link">
+          <div class="lf-product-card">
+            <div class="lf-product-img-wrap">
+              {% with img=rel.get_primary_image %}
+              {% if img %}
+              <img src="{{ img.image.url }}" alt="{{ rel.name }}" class="lf-product-img" loading="lazy" />
+              {% else %}
+              <div class="lf-product-img-placeholder"><i class="bi bi-image"></i></div>
+              {% endif %}
+              {% endwith %}
+              <div class="lf-product-overlay"><span class="lf-view-btn">View Product</span></div>
+            </div>
+            <div class="lf-product-info">
+              <h3 class="lf-product-name">{{ rel.name }}</h3>
+              <p class="lf-product-price">₹{{ rel.price }}</p>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function switchImage(btn, url) {
+    document.getElementById('mainImage').src = url;
+    document.querySelectorAll('.lf-thumb-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  document.querySelectorAll('.lf-size-radio').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      document.querySelectorAll('.lf-size-label').forEach(function(lbl) { lbl.classList.remove('selected'); });
+      document.querySelector('label[for="' + radio.id + '"]').classList.add('selected');
+      // Hide error message when a size is picked
+      const err = document.getElementById('sizeError');
+      if (err) err.classList.add('d-none');
+    });
+  });
+
+  document.getElementById('orderForm').addEventListener('submit', function(e) {
+    const size = document.querySelector('input[name="size"]:checked') || document.querySelector('input[name="size"][type="hidden"]');
+    if (!size) {
+      e.preventDefault();
+      const err = document.getElementById('sizeError');
+      if (err) {
+        err.classList.remove('d-none');
+        err.scrollIntoView({behavior:'smooth', block: 'center'});
+      } else {
+        alert('Please select a size before placing your order.');
+      }
+    }
+  });
+</script>
+{% endblock %}

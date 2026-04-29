@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Owner Dashboard – Lavauz Fashions{% endblock %}
+
+{% block extra_head %}
+<style>
+    .dash-card {
+        background: #fff;
+        border: 1px solid var(--lf-border);
+        border-radius: var(--lf-radius-lg);
+        padding: 1.5rem;
+        transition: var(--lf-transition);
+    }
+    .dash-card:hover {
+        box-shadow: var(--lf-shadow);
+        border-color: var(--lf-gold);
+    }
+    .stat-val {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--lf-black);
+        margin: 0.5rem 0;
+    }
+    .stat-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--lf-gray);
+    }
+    .table-responsive {
+        border-radius: var(--lf-radius-lg);
+        overflow: hidden;
+        border: 1px solid var(--lf-border);
+    }
+    .lf-table thead {
+        background: var(--lf-light-gray);
+    }
+    .lf-table th {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 1rem;
+        border-bottom: 2px solid var(--lf-border);
+    }
+    .lf-table td {
+        padding: 1rem;
+        font-size: 0.88rem;
+        vertical-align: middle;
+    }
+    .status-badge {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .status-pending { background: #fff4e5; color: #b26a00; }
+    .status-confirmed { background: #e8f5e9; color: #2e7d32; }
+    .status-shipped { background: #e3f2fd; color: #1565c0; }
+    .status-delivered { background: #f3e5f5; color: #7b1fa2; }
+    .status-cancelled { background: #ffebee; color: #c62828; }
+
+    .quick-action-btn {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.4rem 0.8rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container lf-section">
+    <!-- Header -->
+    <div class="row align-items-end mb-5">
+        <div class="col-md-8">
+            <p class="lf-section-tag">Business Overview</p>
+            <h1 class="lf-section-title mb-0">Owner Dashboard</h1>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <a href="{% url 'admin:index' %}" class="btn lf-btn-gold px-4 py-2">
+                <i class="bi bi-gear-fill me-2"></i>Go to Django Admin
+            </a>
+        </div>
+    </div>
+
+    <!-- Monthly Performance Stats -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <h5 class="fw-bold mb-0 text-dark">{{ current_month_name }} Performance</h5>
+            <small class="text-muted">Calculated from completed and pending orders (excludes cancelled).</small>
+        </div>
+        <div class="col-md-4">
+            <div class="dash-card" style="border-left: 4px solid #198754;">
+                <p class="stat-label">Total Sales</p>
+                <div class="stat-val text-success">₹{{ current_month_sales }}</div>
+                <div class="d-flex align-items-center text-muted" style="font-size: 0.85rem;">
+                    Revenue this month
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="dash-card" style="border-left: 4px solid #dc3545;">
+                <p class="stat-label">Total Cost (Purchases)</p>
+                <div class="stat-val text-danger">₹{{ current_month_cost }}</div>
+                <div class="d-flex align-items-center text-muted" style="font-size: 0.85rem;">
+                    Cost of items sold
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="dash-card" style="border-left: 4px solid #0d6efd;">
+                <p class="stat-label">Net Profit</p>
+                <div class="stat-val text-primary">₹{{ current_month_profit }}</div>
+                <div class="d-flex align-items-center text-muted" style="font-size: 0.85rem;">
+                    Sales minus Cost
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="dash-card">
+                <p class="stat-label">Total Products</p>
+                <div class="stat-val">{{ total_products }}</div>
+                <div class="d-flex align-items-center text-success" style="font-size: 0.85rem;">
+                    <i class="bi bi-box-seam me-2"></i> Live on store
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="dash-card">
+                <p class="stat-label">Total Orders</p>
+                <div class="stat-val">{{ total_orders }}</div>
+                <div class="d-flex align-items-center text-primary" style="font-size: 0.85rem;">
+                    <i class="bi bi-cart-check me-2"></i> Lifetime orders
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="dash-card" style="border-left: 4px solid #b26a00;">
+                <p class="stat-label">Pending Orders</p>
+                <div class="stat-val text-warning">{{ pending_orders }}</div>
+                <div class="d-flex align-items-center text-warning" style="font-size: 0.85rem;">
+                    <i class="bi bi-clock-history me-2"></i> Action required
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 pb-5">
+        <!-- Recent Orders -->
+        <div class="col-lg-8">
+            <div class="dash-card mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0 fw-bold">Recent Orders</h5>
+                    <a href="{% url 'admin:store_order_changelist' %}" class="text-gold text-decoration-none small fw-bold">View All <i class="bi bi-chevron-right"></i></a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table lf-table mb-0 align-middle">
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Customer</th>
+                                <th class="d-none d-md-table-cell">Product</th>
+                                <th>Status</th>
+                                <th class="d-none d-lg-table-cell">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in recent_orders %}
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">#{{ order.id }}</div>
+                                    <div class="text-muted small d-md-none">{{ order.created_at|date:"d M" }}</div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">{{ order.customer_name }}</div>
+                                    <div class="text-muted small d-none d-md-block">{{ order.phone }}</div>
+                                    <div class="d-md-none"><a href="tel:{{ order.phone }}" class="text-decoration-none"><i class="bi bi-telephone"></i> Call</a></div>
+                                </td>
+                                <td class="d-none d-md-table-cell">
+                                    {% with first_item=order.items.first %}
+                                    {% if first_item %}
+                                    <div class="text-dark">{{ first_item.product.name|truncatechars:25 }}</div>
+                                    <div class="text-muted small">Size: {{ first_item.size }}</div>
+                                    {% if order.items.count > 1 %}
+                                    <div class="text-muted small fw-bold">+ {{ order.items.count|add:"-1" }} more item(s)</div>
+                                    {% endif %}
+                                    {% else %}
+                                    <div class="text-muted">No items</div>
+                                    {% endif %}
+                                    {% endwith %}
+                                </td>
+                                <td>
+                                    <form method="POST" action="{% url 'update_order_status' order.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <select name="status" onchange="this.form.submit()" class="form-select form-select-sm status-badge status-{{ order.status }}" style="width: auto; cursor: pointer; border: none; padding-right: 1.5rem;">
+                                            <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+                                            <option value="confirmed" {% if order.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                                            <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>Shipped</option>
+                                            <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                                            <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td class="text-muted small d-none d-lg-table-cell">{{ order.created_at|date:"d M, H:i" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted">No orders yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Stats & Recent Products -->
+        <div class="col-lg-4">
+            <!-- Category Distribution -->
+            <div class="dash-card mb-4">
+                <h5 class="mb-4 fw-bold">Categories</h5>
+                <div class="lf-cat-stats">
+                    {% for cat in category_stats %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="small fw-bold">{{ cat.name }}</span>
+                            <span class="small text-muted">{{ cat.prod_count }}</span>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar" role="progressbar" style="width: {{ cat.prod_count }}0%; background: var(--lf-gold);" aria-valuenow="{{ cat.prod_count }}" aria-valuemin="0" aria-valuemax="10"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Recent Products -->
+            <div class="dash-card mb-4">
+                <h5 class="mb-4 fw-bold">New Arrivals</h5>
+                <ul class="list-unstyled mb-0">
+                    {% for prod in recent_products %}
+                    <li class="d-flex align-items-center mb-3">
+                        {% with img=prod.get_primary_image %}
+                        <div class="flex-shrink-0 me-3" style="width: 48px; height: 60px; border-radius: 6px; overflow: hidden; background: var(--lf-light-gray);">
+                            {% if img %}
+                            <img src="{{ img.image.url }}" class="w-100 h-100 object-fit-cover" alt="">
+                            {% else %}
+                            <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted"><i class="bi bi-image"></i></div>
+                            {% endif %}
+                        </div>
+                        {% endwith %}
+                        <div class="flex-grow-1 min-w-0">
+                            <div class="fw-bold small text-dark text-truncate">{{ prod.name }}</div>
+                            <div class="text-gold small fw-bold">₹{{ prod.price }}</div>
+                        </div>
+                        <div class="ms-2">
+                            <a href="{% url 'product_detail' prod.slug %}" class="text-muted hover-gold transition" title="View Product">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <hr>
+                <a href="{% url 'admin:store_product_add' %}" class="btn btn-outline-dark w-100 quick-action-btn">
+                    <i class="bi bi-plus-lg me-1"></i> Add New Product
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

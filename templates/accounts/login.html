@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login – Lavauz Fashions{% endblock %}
+
+{% block content %}
+<div class="container lf-section">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="lf-card p-4 p-md-5 shadow-sm border-0 rounded-4">
+                <div class="text-center mb-4">
+                    <p class="lf-section-tag mb-2">Welcome Back</p>
+                    <h2 class="lf-section-title h3 mb-0">Sign In</h2>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-uppercase" style="letter-spacing: 0.05em;">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div class="text-danger small mt-1">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    
+                    <button type="submit" class="btn lf-btn-gold w-100 py-2 mt-3 fw-bold">Login</button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="text-muted small mb-0">Don't have an account? <a href="{% url 'register' %}" class="text-gold fw-bold text-decoration-none">Register Now</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .lf-card {
+        background: #fff;
+        border: 1px solid var(--lf-border);
+    }
+    input[type="text"], input[type="password"] {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--lf-border);
+        border-radius: var(--lf-radius-md);
+        transition: var(--lf-transition);
+    }
+    input:focus {
+        outline: none;
+        border-color: var(--lf-gold);
+        box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.1);
+    }
+</style>
+{% endblock %}

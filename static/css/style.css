@@ -1,0 +1,1226 @@
+/* =============================================
+   LAVUS FASHIONS — Custom Stylesheet
+   Design: Zara-inspired minimal fashion
+   Colors: White / Near-black / Gold (#C9A96E)
+   Font: Inter + Playfair Display
+   ============================================= */
+
+:root {
+  --lf-gold: #C9A96E;
+  --lf-gold-dark: #a8844d;
+  --lf-black: #1a1a1a;
+  --lf-dark: #2d2d2d;
+  --lf-gray: #6b6b6b;
+  --lf-light-gray: #f5f5f5;
+  --lf-border: #e8e8e8;
+  --lf-white: #ffffff;
+  --lf-green: #25D366;
+  --lf-radius: 4px;
+  --lf-radius-lg: 12px;
+  --lf-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+  --lf-shadow-hover: 0 8px 40px rgba(0, 0, 0, 0.15);
+  --lf-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--lf-white);
+  color: var(--lf-black);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* =============================================
+   NAVBAR
+   ============================================= */
+.lf-navbar {
+  background: #000;
+  /* Solid black to match logo */
+  border-bottom: 1px solid #333;
+  padding: 0.5rem 0;
+  transition: var(--lf-transition);
+  z-index: 1050;
+}
+
+.lf-logo-img {
+  height: 50px;
+  width: auto;
+  display: block;
+}
+
+.lf-logo-footer {
+  height: 80px;
+  width: auto;
+  filter: brightness(1.1);
+}
+
+.lf-brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+
+.brand-lf {
+  color: var(--lf-black);
+}
+
+.brand-fashions {
+  color: var(--lf-gold);
+}
+
+.lf-nav-link {
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff !important;
+  /* White text for black navbar */
+  text-decoration: none;
+  padding: 0.5rem 0.75rem !important;
+  position: relative;
+  transition: var(--lf-transition);
+}
+
+.lf-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--lf-gold);
+  transition: var(--lf-transition);
+  transform: translateX(-50%);
+}
+
+.lf-nav-link:hover::after,
+.lf-nav-link.active::after {
+  width: 80%;
+}
+
+.lf-nav-link:hover,
+.lf-nav-link.active {
+  color: var(--lf-gold) !important;
+}
+
+.lf-toggler {
+  border: none;
+  background: none;
+  font-size: 1.5rem;
+  color: #fff;
+  padding: 0.25rem;
+}
+
+.lf-btn-outline {
+  border: 1.5px solid var(--lf-black);
+  color: var(--lf-black);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: var(--lf-radius);
+  transition: var(--lf-transition);
+  text-decoration: none;
+}
+
+.lf-btn-outline:hover {
+  background: var(--lf-black);
+  color: var(--lf-white);
+}
+
+/* Navbar specific button styling */
+.lf-navbar .lf-btn-outline {
+  border-color: var(--lf-gold);
+  color: var(--lf-gold);
+}
+
+.lf-navbar .lf-btn-outline:hover {
+  background: var(--lf-gold);
+  color: var(--lf-black);
+}
+
+/* =============================================
+   HERO SECTION
+   ============================================= */
+.lf-hero {
+  position: relative;
+  height: 90vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  color: #fff;
+  text-align: center;
+}
+
+.lf-hero-bg {
+  position: absolute;
+  inset: 0;
+  background: url('../images/logo1.png') no-repeat center center;
+  background-size: contain;
+  /* Don't stretch the logo image */
+  opacity: 0.8;
+  z-index: 1;
+}
+
+.lf-hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+  width: 100%;
+}
+
+.lf-hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+  line-height: 1;
+}
+
+.lf-hero-subtitle {
+  font-size: 1rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--lf-gold);
+  font-weight: 600;
+  margin-bottom: 2.5rem;
+}
+
+.lf-hero .btn {
+  border-radius: 0;
+  /* Boxy buttons for high-fashion feel */
+  padding: 1rem 2.5rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+}
+
+.lf-btn-gold {
+  background: var(--lf-gold);
+  color: #000 !important;
+  border: 1px solid var(--lf-gold);
+}
+
+.lf-btn-ghost {
+  border: 1px solid #fff;
+  color: #fff !important;
+}
+
+/* Remove decorative background text for cleaner look */
+.lf-hero::after {
+  display: none;
+}
+
+.lf-hero .container {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+}
+
+.lf-hero-tag {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--lf-gold);
+  margin-bottom: 1.25rem;
+  animation: fadeInUp 0.6s ease both;
+}
+
+.lf-hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-weight: 700;
+  color: var(--lf-white);
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+  animation: fadeInUp 0.7s ease 0.1s both;
+}
+
+.lf-hero-title em {
+  font-style: italic;
+  color: var(--lf-gold);
+}
+
+.lf-hero-subtitle {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 520px;
+  margin: 0 auto;
+  animation: fadeInUp 0.8s ease 0.2s both;
+}
+
+.lf-hero .d-flex {
+  animation: fadeInUp 0.9s ease 0.35s both;
+}
+
+/* =============================================
+   BUTTONS
+   ============================================= */
+.lf-btn-gold {
+  background: var(--lf-gold);
+  color: var(--lf-white) !important;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: var(--lf-radius);
+  text-decoration: none;
+  transition: var(--lf-transition);
+}
+
+.lf-btn-gold:hover {
+  background: var(--lf-gold-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(201, 169, 110, 0.4);
+}
+
+.lf-btn-ghost {
+  background: transparent;
+  color: var(--lf-white) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: var(--lf-radius);
+  text-decoration: none;
+  transition: var(--lf-transition);
+}
+
+.lf-btn-ghost:hover {
+  border-color: var(--lf-white);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.lf-btn-whatsapp {
+  background: var(--lf-green);
+  color: var(--lf-white) !important;
+  border: none;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border-radius: var(--lf-radius);
+  transition: var(--lf-transition);
+}
+
+.lf-btn-whatsapp:hover {
+  background: #1da851;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
+}
+
+.lf-btn-insta {
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  color: var(--lf-white) !important;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: var(--lf-radius);
+  text-decoration: none;
+  transition: var(--lf-transition);
+}
+
+.lf-btn-insta:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(220, 39, 67, 0.35);
+}
+
+/* =============================================
+   TRUST STRIP
+   ============================================= */
+.lf-trust-strip {
+  background: var(--lf-light-gray);
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--lf-border);
+}
+
+.lf-trust-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem;
+}
+
+.lf-trust-icon {
+  font-size: 1.6rem;
+  color: var(--lf-gold);
+}
+
+.lf-trust-item p {
+  font-size: 0.82rem;
+  font-weight: 500;
+  margin: 0;
+  text-align: center;
+  line-height: 1.4;
+  color: var(--lf-dark);
+}
+
+.lf-trust-item p small {
+  display: block;
+  color: var(--lf-gray);
+  font-weight: 400;
+}
+
+/* =============================================
+   SECTIONS
+   ============================================= */
+.lf-section {
+  padding: 4rem 0;
+}
+
+.lf-section-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--lf-gold);
+  margin-bottom: 0.5rem;
+}
+
+.lf-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 700;
+  color: var(--lf-black);
+  margin-bottom: 0.75rem;
+}
+
+.lf-divider {
+  width: 48px;
+  height: 3px;
+  background: var(--lf-gold);
+  border-radius: 2px;
+  margin-top: 0.5rem;
+}
+
+/* =============================================
+   PRODUCT CARDS
+   ============================================= */
+.lf-product-card-link {
+  text-decoration: none;
+  display: block;
+  height: 100%;
+}
+
+.lf-product-card {
+  background: var(--lf-white);
+  border: 1px solid var(--lf-border);
+  border-radius: var(--lf-radius-lg);
+  overflow: hidden;
+  transition: var(--lf-transition);
+  height: 100%;
+}
+
+.lf-product-card:hover {
+  box-shadow: var(--lf-shadow-hover);
+  transform: translateY(-4px);
+  border-color: transparent;
+}
+
+.lf-product-img-wrap {
+  position: relative;
+  overflow: hidden;
+  background: var(--lf-light-gray);
+  aspect-ratio: 3/4;
+}
+
+.lf-product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  display: block;
+}
+
+.lf-product-card:hover .lf-product-img {
+  transform: scale(1.06);
+}
+
+.lf-product-img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--lf-light-gray);
+  color: #ccc;
+  font-size: 3rem;
+}
+
+.lf-product-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 26, 26, 0.4);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 1.5rem;
+  opacity: 0;
+  transition: var(--lf-transition);
+}
+
+.lf-product-card:hover .lf-product-overlay {
+  opacity: 1;
+}
+
+.lf-view-btn {
+  background: var(--lf-white);
+  color: var(--lf-black);
+  padding: 0.5rem 1.5rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: var(--lf-radius);
+  transform: translateY(8px);
+  transition: var(--lf-transition);
+}
+
+.lf-product-card:hover .lf-view-btn {
+  transform: translateY(0);
+}
+
+.lf-product-info {
+  padding: 1rem;
+}
+
+.lf-product-name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--lf-black);
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lf-product-price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--lf-gold-dark);
+  margin-bottom: 0.5rem;
+}
+
+.lf-size-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.lf-size-chip {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  background: var(--lf-light-gray);
+  color: var(--lf-gray);
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+}
+
+/* =============================================
+   INSTAGRAM STRIP
+   ============================================= */
+.lf-insta-strip {
+  background: var(--lf-light-gray);
+  padding: 4rem 0;
+  border-top: 1px solid var(--lf-border);
+}
+
+/* =============================================
+   PRODUCT DETAIL PAGE
+   ============================================= */
+.lf-gallery {
+  position: sticky;
+  top: 90px;
+}
+
+.lf-main-img-wrap {
+  border-radius: var(--lf-radius-lg);
+  overflow: hidden;
+  background: var(--lf-light-gray);
+  aspect-ratio: 3/4;
+}
+
+.lf-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--lf-transition);
+}
+
+@media (max-width: 767px) {
+  .lf-main-img-wrap {
+    aspect-ratio: 1/1; /* Square on mobile to save space */
+    max-height: 400px;
+  }
+}
+
+.lf-thumbs {
+  gap: 8px;
+}
+
+.lf-thumb-btn {
+  background: none;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: 0;
+  overflow: hidden;
+  width: 72px;
+  height: 90px;
+  cursor: pointer;
+  transition: var(--lf-transition);
+  flex-shrink: 0;
+}
+
+.lf-thumb-btn:hover,
+.lf-thumb-btn.active {
+  border-color: var(--lf-gold);
+}
+
+.lf-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Product Info */
+.lf-product-detail {
+  padding-top: 0.5rem;
+}
+
+.lf-detail-name {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 700;
+  color: var(--lf-black);
+  margin-bottom: 0.5rem;
+}
+
+.lf-detail-price {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--lf-gold-dark);
+  margin-bottom: 0;
+}
+
+.lf-detail-desc {
+  font-size: 0.92rem;
+  color: var(--lf-gray);
+  line-height: 1.75;
+  margin-bottom: 1.5rem;
+}
+
+/* Size Buttons */
+.lf-size-label {
+  display: inline-block;
+  min-width: 52px;
+  text-align: center;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid var(--lf-border);
+  border-radius: var(--lf-radius);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: var(--lf-transition);
+  color: var(--lf-dark);
+  user-select: none;
+}
+
+.lf-size-label:hover {
+  border-color: var(--lf-gold);
+  color: var(--lf-gold);
+}
+
+.lf-size-label.selected {
+  background: var(--lf-black);
+  border-color: var(--lf-black);
+  color: var(--lf-white);
+}
+
+.lf-size-label.disabled {
+  background: var(--lf-light-gray);
+  border-color: var(--lf-border);
+  color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.lf-size-label.disabled:hover {
+  border-color: var(--lf-border);
+  color: #ccc;
+}
+
+/* Form Elements */
+.lf-form-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lf-dark);
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+.lf-input {
+  border: 1.5px solid var(--lf-border);
+  border-radius: var(--lf-radius);
+  font-size: 0.92rem;
+  padding: 0.65rem 0.9rem;
+  color: var(--lf-black);
+  background: var(--lf-white);
+  transition: var(--lf-transition);
+}
+
+.lf-input:focus {
+  border-color: var(--lf-gold);
+  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.15);
+  outline: none;
+}
+
+.lf-input-prefix {
+  background: var(--lf-light-gray);
+  border: 1.5px solid var(--lf-border);
+  border-right: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--lf-gray);
+  border-radius: var(--lf-radius) 0 0 var(--lf-radius);
+}
+
+/* Trust Badges */
+.lf-trust-badges {
+  gap: 8px !important;
+}
+
+.lf-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--lf-border);
+  border-radius: 20px;
+  color: var(--lf-gray);
+  letter-spacing: 0.03em;
+}
+
+/* Breadcrumb */
+.lf-breadcrumb {
+  background: none;
+  padding: 0;
+  font-size: 0.82rem;
+  margin: 0;
+}
+
+.lf-breadcrumb .breadcrumb-item a {
+  color: var(--lf-gold);
+  text-decoration: none;
+}
+
+.lf-breadcrumb .breadcrumb-item.active {
+  color: var(--lf-gray);
+}
+
+/* Page Header */
+.lf-page-header {
+  padding-top: 1rem;
+}
+
+/* Empty State */
+.lf-empty {
+  padding: 4rem 1rem;
+}
+
+.lf-empty-icon {
+  font-size: 4rem;
+  color: var(--lf-border);
+  display: block;
+  margin-bottom: 1rem;
+}
+
+/* =============================================
+   FOOTER
+   ============================================= */
+.lf-footer {
+  background: var(--lf-black);
+  color: rgba(255, 255, 255, 0.75);
+  padding: 3.5rem 0 2rem;
+}
+
+.lf-footer-brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--lf-gold);
+  margin-bottom: 0.75rem;
+}
+
+.lf-footer-text {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.lf-footer-heading {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--lf-white);
+  margin-bottom: 1rem;
+}
+
+.lf-footer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lf-footer-list li {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 0.6rem;
+}
+
+.lf-footer-list a {
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  transition: var(--lf-transition);
+}
+
+.lf-footer-list a:hover {
+  color: var(--lf-gold);
+}
+
+.lf-social-links {
+  display: flex;
+  gap: 12px;
+}
+
+.lf-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: var(--lf-transition);
+}
+
+.lf-social-link:hover {
+  background: var(--lf-gold);
+  color: var(--lf-white);
+  transform: translateY(-2px);
+}
+
+.lf-footer-hr {
+  border-color: rgba(255, 255, 255, 0.1);
+  margin: 2rem 0 1.5rem;
+}
+
+.lf-footer-copy {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* =============================================
+   ANIMATIONS
+   ============================================= */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 767px) {
+  .lf-hero {
+    height: 75vh;
+    min-height: 420px;
+  }
+
+  .lf-hero-subtitle {
+    font-size: 0.92rem;
+  }
+
+  .lf-gallery {
+    position: static;
+  }
+
+  .lf-thumb-btn {
+    width: 58px;
+    height: 72px;
+  }
+
+  .lf-section {
+    padding: 2.5rem 0;
+  }
+
+  .lf-main-img-wrap {
+    aspect-ratio: 1/1;
+  }
+
+  .lf-product-name {
+    font-size: 0.85rem;
+  }
+
+  .lf-product-price {
+    font-size: 0.92rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .lf-brand {
+    font-size: 1.25rem;
+  }
+
+  .lf-hero-title {
+    font-size: 2.2rem;
+  }
+}
+
+/* =============================================
+   CATEGORY CARDS (Homepage)
+   ============================================= */
+.lf-cat-card-link {
+  text-decoration: none;
+  display: block;
+  height: 100%;
+}
+
+.lf-cat-card {
+  background: var(--lf-white);
+  border: 1px solid var(--lf-border);
+  border-radius: var(--lf-radius-lg);
+  padding: 1.75rem 1.25rem 1.25rem;
+  text-align: center;
+  transition: var(--lf-transition);
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Dashboard Utilities */
+.text-gold {
+  color: var(--lf-gold) !important;
+}
+
+.object-fit-cover {
+  object-fit: cover;
+}
+
+.dash-card {
+  border-radius: var(--lf-radius-lg) !important;
+}
+
+.lf-cat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(201, 169, 110, 0.06) 0%, transparent 70%);
+  opacity: 0;
+  transition: var(--lf-transition);
+}
+
+.lf-cat-card:hover {
+  border-color: var(--lf-gold);
+  box-shadow: 0 8px 32px rgba(201, 169, 110, 0.18);
+  transform: translateY(-4px);
+}
+
+.lf-cat-card:hover::before {
+  opacity: 1;
+}
+
+.lf-cat-icon-wrap {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, var(--lf-gold), var(--lf-gold-dark));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  transition: var(--lf-transition);
+}
+
+.lf-cat-card:hover .lf-cat-icon-wrap {
+  transform: scale(1.1);
+}
+
+.lf-cat-icon {
+  font-size: 1.3rem;
+  color: var(--lf-white);
+}
+
+.lf-cat-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--lf-black);
+  margin-bottom: 0.3rem;
+  line-height: 1.3;
+}
+
+.lf-cat-count {
+  font-size: 0.75rem;
+  color: var(--lf-gray);
+  font-weight: 500;
+}
+
+.lf-cat-arrow {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  color: var(--lf-gold);
+  font-size: 0.9rem;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: var(--lf-transition);
+}
+
+.lf-cat-card:hover .lf-cat-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Alternate background for featured section */
+.lf-section-alt {
+  background: var(--lf-light-gray);
+}
+
+/* =============================================
+   CATEGORY FILTER PILLS (Product List)
+   ============================================= */
+.lf-cat-filter-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+
+.lf-cat-filter-wrap::-webkit-scrollbar {
+  display: none;
+}
+
+.lf-cat-pills {
+  flex-wrap: nowrap !important;
+  min-width: max-content;
+}
+
+@media (min-width: 768px) {
+  .lf-cat-pills {
+    flex-wrap: wrap !important;
+    min-width: auto;
+  }
+}
+
+.lf-cat-pill {
+  display: inline-block;
+  padding: 0.45rem 1.1rem;
+  border: 1.5px solid var(--lf-border);
+  border-radius: 30px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--lf-gray);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: var(--lf-transition);
+  letter-spacing: 0.03em;
+}
+
+.lf-cat-pill:hover {
+  border-color: var(--lf-gold);
+  color: var(--lf-gold);
+  background: rgba(201, 169, 110, 0.06);
+}
+
+.lf-cat-pill.active {
+  background: var(--lf-black);
+  border-color: var(--lf-black);
+  color: var(--lf-white);
+}
+
+/* =============================================
+   NAVBAR DROPDOWN
+   ============================================= */
+.lf-dropdown {
+  border: 1px solid var(--lf-border);
+  border-radius: var(--lf-radius-lg);
+  box-shadow: var(--lf-shadow-hover);
+  padding: 0.5rem 0;
+  min-width: 200px;
+}
+
+.lf-dropdown-item {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--lf-dark) !important;
+  padding: 0.55rem 1.2rem;
+  transition: var(--lf-transition);
+}
+
+.lf-dropdown-item:hover {
+  background: rgba(201, 169, 110, 0.08);
+  color: var(--lf-gold) !important;
+}
+
+.lf-divider-hr {
+  border-color: var(--lf-border);
+  margin: 0.25rem 0;
+}
+
+/* =============================================
+   PRODUCT BADGE (Category label on card)
+   ============================================= */
+.lf-product-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(26, 26, 26, 0.78);
+  color: var(--lf-white);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+
+/* =============================================
+   CATEGORY TAG (Product detail page)
+   ============================================= */
+.lf-cat-tag-link {
+  text-decoration: none;
+}
+
+.lf-cat-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lf-gold);
+  border: 1px solid var(--lf-gold);
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 0.75rem;
+  transition: var(--lf-transition);
+}
+
+.lf-cat-tag-link:hover .lf-cat-tag {
+  background: var(--lf-gold);
+  color: var(--lf-white);
+}
+
+/* =============================================
+   RELATED PRODUCTS SECTION
+   ============================================= */
+.lf-related {
+  border-top: 1px solid var(--lf-border);
+}
+
+/* =============================================
+   MOBILE LAYOUT POLISH
+   ============================================= */
+@media (max-width: 767px) {
+  .container, .container-fluid {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+}
+
+/* =============================================
+   SPECIAL OFFER BANNER
+   ============================================= */
+.lf-offer-banner {
+  background: #000;
+  color: #fff;
+  padding: 3rem 0;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid #333;
+}
+
+.lf-offer-content {
+  position: relative;
+  z-index: 2;
+}
+
+.lf-offer-tag {
+  color: var(--lf-gold);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.lf-offer-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  margin: 1rem 0;
+}
+
+.lf-offer-desc {
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+.lf-offer-img-bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 50%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.6;
+  z-index: 1;
+  -webkit-mask-image: linear-gradient(to left, black, transparent);
+  mask-image: linear-gradient(to left, black, transparent);
+}
+
+@media (max-width: 991px) {
+  .lf-offer-img-bg {
+    width: 100%;
+    opacity: 0.3;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}

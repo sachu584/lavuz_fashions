@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Track Order – Lavauz Fashions{% endblock %}
+
+{% block extra_head %}
+<style>
+    .track-card {
+        background: #fff;
+        border: 1px solid var(--lf-border);
+        border-radius: var(--lf-radius-lg);
+        padding: 2.5rem;
+    }
+    .result-card {
+        background: #fff;
+        border: 2px solid var(--lf-gold);
+        border-radius: var(--lf-radius-lg);
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+    .status-badge {
+        padding: 8px 18px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .status-pending { background: #fff4e5; color: #b26a00; }
+    .status-confirmed { background: #e8f5e9; color: #2e7d32; }
+    .status-shipped { background: #e3f2fd; color: #1565c0; }
+    .status-delivered { background: #f3e5f5; color: #7b1fa2; }
+    .status-cancelled { background: #ffebee; color: #c62828; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container lf-section">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="text-center mb-5">
+                <p class="lf-section-tag">Order Tracking</p>
+                <h1 class="lf-section-title">Track Your Order</h1>
+                <p class="text-muted">Enter your Order ID and the phone number used during purchase.</p>
+            </div>
+
+            <div class="track-card shadow-sm">
+                <form method="GET" action="{% url 'track_order' %}">
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase">Order ID</label>
+                        <input type="text" name="order_id" class="form-control lf-input" placeholder="e.g. 101" value="{{ order_id|default:'' }}" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase">Phone Number</label>
+                        <input type="text" name="phone" class="form-control lf-input" placeholder="e.g. 9999999999" value="{{ phone|default:'' }}" required>
+                    </div>
+                    <button type="submit" class="btn lf-btn-gold w-100 py-3 fw-bold">Track Status</button>
+                </form>
+            </div>
+
+            {% if order %}
+            <div class="result-card shadow">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0">Order Status</h4>
+                    <div class="status-badge status-{{ order.status }}">
+                        {{ order.get_status_display }}
+                    </div>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-3">
+                        {% with first_item=order.items.first %}
+                        {% if first_item %}
+                        {% with img=first_item.product.get_primary_image %}
+                        <div style="aspect-ratio: 3/4; border-radius: 8px; overflow: hidden; background: #f8f9fa;">
+                            {% if img %}
+                            <img src="{{ img.image.url }}" class="w-100 h-100 object-fit-cover" alt="">
+                            {% else %}
+                            <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
+                                <i class="bi bi-image"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endwith %}
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="col-md-9">
+                        <div class="mb-3">
+                            {% for item in order.items.all %}
+                            <div class="mb-2 pb-2 {% if not forloop.last %}border-bottom{% endif %}">
+                                <h6 class="fw-bold mb-1" style="font-size: 0.95rem;">{{ item.quantity }}x {{ item.product.name }}</h6>
+                                <p class="text-muted small mb-0">Size: <span class="fw-bold text-dark">{{ item.size }}</span> | Price: ₹{{ item.price }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="d-flex align-items-center mt-3">
+                            <span class="text-muted small me-2">Shipping: ₹{{ order.shipping_charge }}</span>
+                            <span class="text-gold fw-bold ms-auto" style="font-size: 1.1rem;">Total: ₹{{ order.total_amount }}</span>
+                        </div>
+                        
+                        <div class="border-top pt-3 mt-3">
+                            <p class="small text-muted mb-1">Shipping Address:</p>
+                            <p class="small fw-medium mb-0">{{ order.address }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <hr>
+                    <p class="small text-muted mb-3">Need help? Contact us on WhatsApp</p>
+                    <a href="https://wa.me/{{ WHATSAPP_NUMBER }}?text=Hi, I'm checking on order #{{ order.id }}" class="btn btn-success btn-sm px-4">
+                        <i class="bi bi-whatsapp me-2"></i>Chat with Support
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .lf-input {
+        padding: 0.8rem 1.2rem;
+        border: 1px solid var(--lf-border);
+        border-radius: var(--lf-radius-md);
+    }
+    .lf-input:focus {
+        border-color: var(--lf-gold);
+        box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.1);
+    }
+</style>
+{% endblock %}
