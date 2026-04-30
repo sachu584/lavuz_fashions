@@ -1,4 +1,5 @@
 from .models import Cart
+from django.conf import settings
 
 def cart_count(request):
     count = 0
@@ -12,4 +13,7 @@ def cart_count(request):
             cart = Cart.objects.filter(session_id=session_id).first()
             if cart:
                 count = sum(item.quantity for item in cart.items.all())
-    return {'cart_item_count': count}
+    return {
+        'cart_item_count': count,
+        'WHATSAPP_NUMBER': getattr(settings, 'WHATSAPP_NUMBER', '916235712129')
+    }

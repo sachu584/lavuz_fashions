@@ -96,7 +96,7 @@
         <div class="col-md-4">
             <div class="dash-card" style="border-left: 4px solid #198754;">
                 <p class="stat-label">Total Sales</p>
-                <div class="stat-val text-success">₹{{ current_month_sales }}</div>
+                <div class="stat-val text-success">₹{{ current_month_sales|floatformat:2 }}</div>
                 <div class="d-flex align-items-center text-muted" style="font-size: 0.85rem;">
                     Revenue this month
                 </div>
@@ -105,7 +105,7 @@
         <div class="col-md-4">
             <div class="dash-card" style="border-left: 4px solid #dc3545;">
                 <p class="stat-label">Total Cost (Purchases)</p>
-                <div class="stat-val text-danger">₹{{ current_month_cost }}</div>
+                <div class="stat-val text-danger">₹{{ current_month_cost|floatformat:2 }}</div>
                 <div class="d-flex align-items-center text-muted" style="font-size: 0.85rem;">
                     Cost of items sold
                 </div>
@@ -114,7 +114,7 @@
         <div class="col-md-4">
             <div class="dash-card" style="border-left: 4px solid #0d6efd;">
                 <p class="stat-label">Net Profit</p>
-                <div class="stat-val text-primary">₹{{ current_month_profit }}</div>
+                <div class="stat-val text-primary">₹{{ current_month_profit|floatformat:2 }}</div>
                 <div class="d-flex align-items-center text-muted" style="font-size: 0.85rem;">
                     Sales minus Cost
                 </div>
@@ -259,7 +259,7 @@
                         {% endwith %}
                         <div class="flex-grow-1 min-w-0">
                             <div class="fw-bold small text-dark text-truncate">{{ prod.name }}</div>
-                            <div class="text-gold small fw-bold">₹{{ prod.price }}</div>
+                            <div class="text-gold small fw-bold">₹{{ prod.price|floatformat:2 }}</div>
                         </div>
                         <div class="ms-2">
                             <a href="{% url 'product_detail' prod.slug %}" class="text-muted hover-gold transition" title="View Product">

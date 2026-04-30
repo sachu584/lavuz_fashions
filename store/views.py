@@ -15,7 +15,7 @@ import json
 
 def home(request):
     categories = Category.objects.filter(is_active=True)
-    featured_products = Product.objects.filter(is_active=True)[:8]
+    featured_products = Product.objects.filter(is_active=True).order_by('?')[:8]
     active_offer = SpecialOffer.objects.filter(is_active=True).first()
     return render(request, 'home.html', {
         'categories': categories,
@@ -25,7 +25,7 @@ def home(request):
 
 def product_list(request):
     categories = Category.objects.filter(is_active=True)
-    products = Product.objects.filter(is_active=True)
+    products = Product.objects.filter(is_active=True).order_by('?')
     return render(request, 'store/product_list.html', {
         'products': products,
         'categories': categories,
@@ -34,7 +34,7 @@ def product_list(request):
 def category_detail(request, slug):
     active_category = get_object_or_404(Category, slug=slug, is_active=True)
     categories = Category.objects.filter(is_active=True)
-    products = Product.objects.filter(category=active_category, is_active=True)
+    products = Product.objects.filter(category=active_category, is_active=True).order_by('?')
     return render(request, 'store/product_list.html', {
         'products': products,
         'categories': categories,
@@ -45,7 +45,7 @@ def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug, is_active=True)
     images = product.images.all()
     variants = product.variants.all()
-    related = Product.objects.filter(category=product.category, is_active=True).exclude(id=product.id)[:4]
+    related = Product.objects.filter(category=product.category, is_active=True).exclude(id=product.id).order_by('?')[:4]
     categories = Category.objects.filter(is_active=True)
     return render(request, 'store/product_detail.html', {
         'product': product,
@@ -98,17 +98,28 @@ def add_to_cart(request, product_id):
         size = request.POST.get('size')
         quantity = int(request.POST.get('quantity', 1))
         
+        cart = _get_or_create_cart(request)
         # Validation: If product has variants, size must be selected
         if product.variants.exists() and not size:
-            messages.error(request, "Please select a size before adding to cart.")
+            messages.error(request, "Please select a size.")
             return redirect('product_detail', slug=product.slug)
             
-        # If no size provided for a product without variants, default to 'Free Size'
-        if not size:
-            size = 'Free Size'
+        if not size: size = 'Free Size'
             
         cart = _get_or_create_cart(request)
         variant = product.variants.filter(size=size).first()
+        
+        # Stock Validation
+        if variant:
+            # Calculate total quantity if item already in cart
+            current_cart_item = cart.items.filter(product=product, variant=variant).first()
+            requested_total = quantity
+            if current_cart_item:
+                requested_total += current_cart_item.quantity
+                
+            if requested_total > variant.stock:
+                messages.error(request, f"Sorry, only {variant.stock} units of {product.name} ({size}) are available.")
+                return redirect('product_detail', slug=product.slug)
         
         cart_item, created = CartItem.objects.get_or_create(
             cart=cart,
@@ -162,7 +173,14 @@ def update_cart(request, item_id):
         cart = _get_or_create_cart(request)
         cart_item = get_object_or_404(CartItem, id=item_id, cart=cart)
         quantity = int(request.POST.get('quantity', 1))
+        
         if quantity > 0:
+            # Stock Validation
+            if cart_item.variant:
+                if quantity > cart_item.variant.stock:
+                    messages.error(request, f"Sorry, only {cart_item.variant.stock} units available.")
+                    return redirect('view_cart')
+            
             cart_item.quantity = quantity
             cart_item.save()
             messages.success(request, "Cart updated.")
@@ -267,7 +285,7 @@ def owner_dashboard(request):
     pending_orders = Order.objects.filter(status='pending').count()
     
     # Current Month Sales and Profit
-    now = timezone.now()
+    now = timezone.localtime(timezone.now())
     current_month = now.month
     current_year = now.year
     month_name = now.strftime('%B')

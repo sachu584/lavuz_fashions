@@ -19,12 +19,12 @@
                 <div class="card-body p-4">
                     <div class="table-responsive">
                         <table class="table align-middle">
-                            <thead class="text-muted" style="font-size: 0.9rem; text-transform: uppercase;">
+                            <thead class="text-muted" style="font-size: 0.8rem; text-transform: uppercase;">
                                 <tr>
                                     <th scope="col">Product</th>
-                                    <th scope="col">Price</th>
+                                    <th scope="col" class="d-none d-md-table-cell">Price</th>
                                     <th scope="col">Quantity</th>
-                                    <th scope="col">Total</th>
+                                    <th scope="col" class="d-none d-md-table-cell">Total</th>
                                     <th scope="col"></th>
                                 </tr>
                             </thead>
@@ -34,29 +34,34 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             {% if item.product.get_primary_image %}
-                                            <img src="{{ item.product.get_primary_image.image.url }}" alt="{{ item.product.name }}" class="img-fluid rounded" style="width: 60px; height: 75px; object-fit: cover;">
+                                            <img src="{{ item.product.get_primary_image.image.url }}" alt="{{ item.product.name }}" class="img-fluid rounded" style="width: 50px; height: 65px; object-fit: cover;">
                                             {% else %}
-                                            <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 75px;">
+                                            <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 50px; height: 65px;">
                                                 <i class="bi bi-image text-muted"></i>
                                             </div>
                                             {% endif %}
-                                            <div class="ms-3">
-                                                <h6 class="mb-0 fw-bold">{{ item.product.name }}</h6>
-                                                <small class="text-muted">Size: {{ item.variant.size|default:"Free Size" }}</small>
+                                            <div class="ms-2 ms-md-3">
+                                                <h6 class="mb-0 fw-bold" style="font-size: 0.9rem;">{{ item.product.name }}</h6>
+                                                <small class="text-muted" style="font-size: 0.75rem;">Size: {{ item.variant.size|default:"Free Size" }}</small>
+                                                <!-- Mobile only price/total -->
+                                                <div class="d-md-none mt-1" style="line-height: 1.2;">
+                                                    <div class="text-muted" style="font-size: 0.75rem;">Price: Rs. {{ item.product.price|floatformat:2 }}</div>
+                                                    <div class="fw-bold text-gold" style="font-size: 0.8rem;">Total: Rs. {{ item.get_subtotal|floatformat:2 }}</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>Rs. {{ item.product.price }}</td>
+                                    <td class="d-none d-md-table-cell">Rs. {{ item.product.price|floatformat:2 }}</td>
                                     <td>
-                                        <form action="{% url 'update_cart' item.id %}" method="POST" class="d-flex align-items-center" style="max-width: 100px;">
+                                        <form action="{% url 'update_cart' item.id %}" method="POST" class="d-flex align-items-center" style="max-width: 90px;">
                                             {% csrf_token %}
-                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control form-control-sm text-center">
-                                            <button type="submit" class="btn btn-sm btn-light ms-1"><i class="bi bi-arrow-repeat"></i></button>
+                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control form-control-sm text-center px-1">
+                                            <button type="submit" class="btn btn-sm btn-light ms-1" title="Update"><i class="bi bi-arrow-repeat"></i></button>
                                         </form>
                                     </td>
-                                    <td class="fw-bold">Rs. {{ item.get_subtotal }}</td>
+                                    <td class="fw-bold d-none d-md-table-cell">Rs. {{ item.get_subtotal|floatformat:2 }}</td>
                                     <td class="text-end">
-                                        <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-sm btn-outline-danger" title="Remove Item"><i class="bi bi-trash"></i></a>
+                                        <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-sm btn-outline-danger border-0" title="Remove Item"><i class="bi bi-trash"></i></a>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -73,16 +78,16 @@
                     <h5 class="fw-bold mb-4">Order Summary</h5>
                     <div class="d-flex justify-content-between mb-3">
                         <span class="text-muted">Subtotal</span>
-                        <span class="fw-bold">Rs. {{ subtotal }}</span>
+                        <span class="fw-bold">Rs. {{ subtotal|floatformat:2 }}</span>
                     </div>
                     <div class="d-flex justify-content-between mb-3">
                         <span class="text-muted">Shipping</span>
-                        <span class="fw-bold">Rs. {{ shipping_charge }}</span>
+                        <span class="fw-bold">Rs. {{ shipping_charge|floatformat:2 }}</span>
                     </div>
                     <hr>
                     <div class="d-flex justify-content-between mb-4">
                         <span class="fw-bold" style="font-size: 1.2rem;">Total</span>
-                        <span class="fw-bold text-gold" style="font-size: 1.2rem;">Rs. {{ total_amount }}</span>
+                        <span class="fw-bold text-gold" style="font-size: 1.2rem;">Rs. {{ total_amount|floatformat:2 }}</span>
                     </div>
                     
                     <a href="{% url 'checkout' %}" class="btn lf-btn-gold w-100 py-2 fw-bold">Proceed to Checkout</a>

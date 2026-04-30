@@ -63,7 +63,7 @@ lavus_fashions/
 
 Open `core/settings.py` and change:
 ```python
-WHATSAPP_NUMBER = '91XXXXXXXXXX'  # Your number here (no + or spaces)
+WHATSAPP_NUMBER = '916235712129'  # Your number here (no + or spaces)
 ```
 
 ---

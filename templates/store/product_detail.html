@@ -56,7 +56,7 @@
         {% endif %}
 
         <h1 class="lf-detail-name">{{ product.name }}</h1>
-        <p class="lf-detail-price">₹{{ product.price }}</p>
+        <p class="lf-detail-price">₹{{ product.price|floatformat:2 }}</p>
         <div class="lf-divider mb-4"></div>
         <p class="lf-detail-desc">{{ product.description }}</p>
 
@@ -69,7 +69,8 @@
               <label class="lf-form-label">Select Size <span class="text-danger">*</span></label>
               <div class="lf-size-btns d-flex flex-wrap gap-2 mt-2" id="sizeBtns">
                 {% for variant in variants %}
-                <input type="radio" name="size" id="size_{{ variant.size }}" value="{{ variant.size }}" class="d-none lf-size-radio" 
+                <input type="radio" name="size" id="size_{{ variant.size }}" value="{{ variant.size }}" 
+                       class="d-none lf-size-radio" data-stock="{{ variant.stock }}"
                        {% if variants.count == 1 and variant.stock > 0 %}checked{% endif %} 
                        {% if variant.stock <= 0 or not variant.is_available %}disabled{% endif %}
                        required>
@@ -82,13 +83,22 @@
                 </label>
                 {% endfor %}
               </div>
+              
+              <!-- Dynamic Stock Info -->
+              <div id="stockStatus" class="mt-2 d-none">
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2" id="inStockBadge">
+                  <i class="bi bi-check2-circle me-1"></i> In Stock: <span id="stockCount">0</span> units
+                </span>
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 d-none" id="outStockBadge">
+                  <i class="bi bi-x-circle me-1"></i> Out of Stock
+                </span>
+              </div>
+
               <div id="sizeError" class="alert alert-danger p-2 mt-2 d-none" style="font-size: 0.8rem; border-radius: 8px;">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i>Please select a size first!
               </div>
               {% if variants.count > 1 %}
-              <small class="text-muted mt-1 d-block">Click to select your size</small>
-              {% else %}
-              <small class="text-muted mt-1 d-block">Standard size for this product</small>
+              <small class="text-muted mt-1 d-block">Select a size to see availability</small>
               {% endif %}
             </div>
           {% else %}
@@ -143,7 +153,7 @@
             </div>
             <div class="lf-product-info">
               <h3 class="lf-product-name">{{ rel.name }}</h3>
-              <p class="lf-product-price">₹{{ rel.price }}</p>
+              <p class="lf-product-price">₹{{ rel.price|floatformat:2 }}</p>
             </div>
           </div>
         </a>
@@ -163,27 +173,91 @@
     document.querySelectorAll('.lf-thumb-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
   }
-  document.querySelectorAll('.lf-size-radio').forEach(function(radio) {
-    radio.addEventListener('change', function() {
+  function updateStockInfo(radio) {
+      if (!radio) return;
       document.querySelectorAll('.lf-size-label').forEach(function(lbl) { lbl.classList.remove('selected'); });
       document.querySelector('label[for="' + radio.id + '"]').classList.add('selected');
-      // Hide error message when a size is picked
+      
+      const stock = parseInt(radio.getAttribute('data-stock'));
+      const statusDiv = document.getElementById('stockStatus');
+      const inStockBadge = document.getElementById('inStockBadge');
+      const outStockBadge = document.getElementById('outStockBadge');
+      const countSpan = document.getElementById('stockCount');
+      const qtyInput = document.getElementById('quantity');
+      
+      statusDiv.classList.remove('d-none');
+      if (stock > 0) {
+        inStockBadge.classList.remove('d-none');
+        outStockBadge.classList.add('d-none');
+        countSpan.innerText = stock;
+        qtyInput.max = stock;
+
+        if (stock < 5) {
+            inStockBadge.className = 'badge bg-warning-subtle text-dark border border-warning-subtle px-3 py-2';
+            inStockBadge.innerHTML = `<i class="bi bi-exclamation-circle me-1"></i> Hurry! Only ${stock} left`;
+        } else {
+            inStockBadge.className = 'badge bg-success-subtle text-success border border-success-subtle px-3 py-2';
+            inStockBadge.innerHTML = `<i class="bi bi-check2-circle me-1"></i> In Stock: ${stock} units`;
+        }
+      } else {
+        inStockBadge.classList.add('d-none');
+        outStockBadge.classList.remove('d-none');
+        qtyInput.max = 0;
+      }
+
       const err = document.getElementById('sizeError');
       if (err) err.classList.add('d-none');
+  }
+
+  document.querySelectorAll('.lf-size-radio').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        updateStockInfo(this);
     });
   });
 
+  window.addEventListener('DOMContentLoaded', function() {
+      const checkedSize = document.querySelector('.lf-size-radio:checked');
+      if (checkedSize) {
+          updateStockInfo(checkedSize);
+      }
+  });
+
+  document.getElementById('quantity').addEventListener('input', function() {
+    const selectedSize = document.querySelector('input[name="size"]:checked');
+    if (selectedSize) {
+        const stock = parseInt(selectedSize.getAttribute('data-stock'));
+        const buyBtn = document.getElementById('buyNowBtn');
+        if (parseInt(this.value) > stock) {
+            buyBtn.disabled = true;
+            buyBtn.style.opacity = '0.5';
+        } else {
+            buyBtn.disabled = false;
+            buyBtn.style.opacity = '1';
+        }
+    }
+  });
+
   document.getElementById('orderForm').addEventListener('submit', function(e) {
-    const size = document.querySelector('input[name="size"]:checked') || document.querySelector('input[name="size"][type="hidden"]');
-    if (!size) {
+    const sizeInput = document.querySelector('input[name="size"]:checked') || document.querySelector('input[name="size"][type="hidden"]');
+    if (!sizeInput) {
       e.preventDefault();
       const err = document.getElementById('sizeError');
       if (err) {
         err.classList.remove('d-none');
         err.scrollIntoView({behavior:'smooth', block: 'center'});
       } else {
-        alert('Please select a size before placing your order.');
+        alert('Please select a size first.');
       }
+      return;
+    }
+
+    if (sizeInput.type !== 'hidden') {
+        const stock = parseInt(sizeInput.getAttribute('data-stock'));
+        const qty = parseInt(document.getElementById('quantity').value);
+        if (qty > stock) {
+            e.preventDefault();
+            alert('Sorry, only ' + stock + ' units available.');
+        }
     }
   });
 </script>

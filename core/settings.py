@@ -87,8 +87,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# WhatsApp Business Number (Official: 7994753027)
-WHATSAPP_NUMBER = '917994753027'  # Format: country code + number, no + or spaces
+# WhatsApp Business Number (Official: 6235712129)
+WHATSAPP_NUMBER = '916235712129'  # Format: country code + number, no + or spaces
+
 
 # Razorpay Configuration (Test Keys)
 RAZORPAY_KEY_ID = 'rzp_test_placeholder'
