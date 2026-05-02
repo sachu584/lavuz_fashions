@@ -20,6 +20,20 @@
     {% endif %}
   </div>
 
+  <!-- Search Bar -->
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-6 col-lg-5">
+      <form action="{% if active_category %}{% url 'category_detail' active_category.slug %}{% else %}{% url 'product_list' %}{% endif %}" method="get" class="lf-search-form">
+        <div class="input-group">
+          <input type="text" name="q" class="form-control lf-search-input" placeholder="Search products (e.g. churidar)..." value="{{ query|default:'' }}">
+          <button class="btn lf-btn-gold" type="submit">
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- ===== CATEGORY FILTER PILLS ===== -->
   {% if categories %}
   <div class="lf-cat-filter-wrap mb-4">
@@ -96,3 +110,5 @@
 
 </div>
 {% endblock %}
+
+

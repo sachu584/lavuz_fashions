@@ -26,19 +26,31 @@ def home(request):
 def product_list(request):
     categories = Category.objects.filter(is_active=True)
     products = Product.objects.filter(is_active=True).order_by('?')
+    
+    query = request.GET.get('q')
+    if query:
+        products = products.filter(name__icontains=query)
+        
     return render(request, 'store/product_list.html', {
         'products': products,
         'categories': categories,
+        'query': query,
     })
 
 def category_detail(request, slug):
     active_category = get_object_or_404(Category, slug=slug, is_active=True)
     categories = Category.objects.filter(is_active=True)
     products = Product.objects.filter(category=active_category, is_active=True).order_by('?')
+    
+    query = request.GET.get('q')
+    if query:
+        products = products.filter(name__icontains=query)
+
     return render(request, 'store/product_list.html', {
         'products': products,
         'categories': categories,
         'active_category': active_category,
+        'query': query,
     })
 
 def product_detail(request, slug):

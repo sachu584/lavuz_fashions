@@ -558,22 +558,17 @@ body {
   border-radius: var(--lf-radius-lg);
   overflow: hidden;
   background: var(--lf-light-gray);
-  aspect-ratio: 3/4;
+  /* Removed fixed aspect-ratio to show full photos of any ratio */
 }
 
 .lf-main-img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  display: block;
   transition: var(--lf-transition);
 }
 
-@media (max-width: 767px) {
-  .lf-main-img-wrap {
-    aspect-ratio: 1/1; /* Square on mobile to save space */
-    max-height: 400px;
-  }
-}
+
 
 .lf-thumbs {
   gap: 8px;
@@ -888,9 +883,7 @@ body {
     padding: 2.5rem 0;
   }
 
-  .lf-main-img-wrap {
-    aspect-ratio: 1/1;
-  }
+
 
   .lf-product-name {
     font-size: 0.85rem;
@@ -1223,4 +1216,75 @@ body {
     -webkit-mask-image: none;
     mask-image: none;
   }
+}
+
+/* =============================================
+   SEARCH BAR
+   ============================================= */
+.lf-search-form .input-group {
+  border: 1.5px solid var(--lf-border);
+  border-radius: var(--lf-radius);
+  overflow: hidden;
+  transition: var(--lf-transition);
+}
+
+.lf-search-form .input-group:focus-within {
+  border-color: var(--lf-gold);
+  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.15);
+}
+
+.lf-search-input {
+  border: none !important;
+  padding: 0.75rem 1.25rem !important;
+  font-size: 0.92rem !important;
+}
+
+.lf-search-input:focus {
+  box-shadow: none !important;
+}
+
+.lf-search-form .lf-btn-gold {
+  border-radius: 0;
+  padding: 0 1.5rem !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.lf-suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--lf-white);
+  border: 1px solid var(--lf-border);
+  border-top: none;
+  border-radius: 0 0 var(--lf-radius) var(--lf-radius);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.lf-suggestion-item {
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  transition: var(--lf-transition);
+  border-bottom: 1px solid var(--lf-light-gray);
+  font-size: 0.9rem;
+}
+
+.lf-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.lf-suggestion-item:hover {
+  background: var(--lf-light-gray);
+  color: var(--lf-gold-dark);
+}
+
+.lf-suggestion-item i {
+  color: var(--lf-gold);
+  font-size: 1rem;
 }
