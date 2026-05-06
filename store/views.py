@@ -14,13 +14,19 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 
 def home(request):
-    categories = Category.objects.filter(is_active=True)
+    categories = Category.objects.filter(is_active=True).order_by('?')
     featured_products = Product.objects.filter(is_active=True).order_by('?')[:8]
     active_offer = SpecialOffer.objects.filter(is_active=True).first()
     return render(request, 'home.html', {
-        'categories': categories,
+        'categories': categories[:4], # Limit to 4 on home page
         'featured_products': featured_products,
         'active_offer': active_offer,
+    })
+
+def category_list(request):
+    categories = Category.objects.filter(is_active=True).order_by('?')
+    return render(request, 'store/category_list.html', {
+        'categories': categories,
     })
 
 def product_list(request):

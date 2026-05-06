@@ -1325,5 +1325,24 @@ body {
   font-size: 1rem;
 }
 
+/* Responsive Pricing Adjustments */
+@media (max-width: 576px) {
+  .lf-product-price-box {
+    flex-wrap: wrap !important;
+    gap: 4px 8px !important;
+  }
+  
+  .lf-badge-sale {
+    margin-left: 0 !important;
+    font-size: 0.65rem !important;
+    padding: 2px 6px !important;
+    white-space: nowrap !important;
+  }
+
+  .lf-price-old, .lf-price-new, .lf-price-current {
+    font-size: 1.05rem !important;
+  }
+}
+
 
 
