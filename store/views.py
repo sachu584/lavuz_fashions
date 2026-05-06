@@ -156,21 +156,40 @@ def view_cart(request):
     
     settings_obj = StoreSettings.objects.first()
     shipping_charge = 0
+    
+    # Calculate which items require shipping
+    shipping_required_items = [item for item in cart_items if not item.product.is_free_shipping]
+    
     if settings_obj and cart_items:
-        if settings_obj.shipping_type == 'fixed':
-            shipping_charge = settings_obj.shipping_amount
-        elif settings_obj.shipping_type == 'per_product':
-            total_items = sum(item.quantity for item in cart_items)
-            shipping_charge = settings_obj.shipping_amount * total_items
+        # 1. Global Threshold check (Everything free if over Rs. X)
+        if settings_obj.free_shipping_threshold > 0 and subtotal >= settings_obj.free_shipping_threshold:
+            shipping_charge = 0
+        # 2. Check if there are any items that actually require shipping
+        elif not shipping_required_items:
+            shipping_charge = 0
+        # 3. Apply standard shipping for the remaining items
+        else:
+            if settings_obj.shipping_type == 'fixed':
+                shipping_charge = settings_obj.shipping_amount
+            elif settings_obj.shipping_type == 'per_product':
+                # Only charge for items that are NOT marked as free shipping
+                total_shipping_units = sum(item.quantity for item in shipping_required_items)
+                shipping_charge = settings_obj.shipping_amount * total_shipping_units
             
     total_amount = subtotal + shipping_charge
     
+    amount_to_free_shipping = 0
+    if settings_obj and settings_obj.free_shipping_threshold > 0:
+        amount_to_free_shipping = max(0, settings_obj.free_shipping_threshold - subtotal)
+        
     return render(request, 'store/cart.html', {
         'cart_items': cart_items,
-        'categories': categories,
         'subtotal': subtotal,
         'shipping_charge': shipping_charge,
         'total_amount': total_amount,
+        'categories': categories,
+        'settings': settings_obj,
+        'amount_to_free_shipping': amount_to_free_shipping,
     })
 
 def remove_from_cart(request, item_id):
@@ -213,12 +232,25 @@ def checkout(request):
     subtotal = cart.get_total()
     settings_obj = StoreSettings.objects.first()
     shipping_charge = 0
+    
+    # Calculate which items require shipping
+    shipping_required_items = [item for item in cart_items if not item.product.is_free_shipping]
+
     if settings_obj:
-        if settings_obj.shipping_type == 'fixed':
-            shipping_charge = settings_obj.shipping_amount
-        elif settings_obj.shipping_type == 'per_product':
-            total_items = sum(item.quantity for item in cart_items)
-            shipping_charge = settings_obj.shipping_amount * total_items
+        # 1. Global Threshold check
+        if settings_obj.free_shipping_threshold > 0 and subtotal >= settings_obj.free_shipping_threshold:
+            shipping_charge = 0
+        # 2. Check if there are any items that actually require shipping
+        elif not shipping_required_items:
+            shipping_charge = 0
+        # 3. Apply standard shipping
+        else:
+            if settings_obj.shipping_type == 'fixed':
+                shipping_charge = settings_obj.shipping_amount
+            elif settings_obj.shipping_type == 'per_product':
+                # Only charge for items that are NOT marked as free shipping
+                total_shipping_units = sum(item.quantity for item in shipping_required_items)
+                shipping_charge = settings_obj.shipping_amount * total_shipping_units
             
     total_amount = subtotal + shipping_charge
 
@@ -243,7 +275,7 @@ def checkout(request):
                 product=item.product,
                 size=item.variant.size if item.variant else 'Free Size',
                 quantity=item.quantity,
-                price=item.product.price,
+                price=item.product.effective_price,
                 cost_price=item.product.cost_price
             )
             if item.variant:

@@ -56,8 +56,23 @@
         {% endif %}
 
         <h1 class="lf-detail-name">{{ product.name }}</h1>
-        <p class="lf-detail-price">₹{{ product.price|floatformat:2 }}</p>
+        <div class="lf-product-price-box align-items-baseline mb-3">
+          {% if product.offer_price %}
+            <span class="lf-price-old me-2" style="font-size: 1.1rem; color: #999;">₹{{ product.price|floatformat:0 }}</span>
+            <span class="lf-price-new" style="font-size: 2.2rem; color: var(--lf-black);">₹{{ product.offer_price|floatformat:0 }}</span>
+            <span class="lf-badge-sale ms-3" style="font-size: 0.85rem; padding: 4px 10px; border-radius: 4px;">-{{ product.discount_percentage }}% OFF</span>
+          {% else %}
+            <span class="lf-price-current" style="font-size: 2.2rem; color: var(--lf-black);">₹{{ product.price|floatformat:0 }}</span>
+          {% endif %}
+        </div>
         <div class="lf-divider mb-4"></div>
+        {% if product.is_free_shipping %}
+        <div class="mb-3">
+          <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+            <i class="bi bi-truck me-2"></i>FREE SHIPPING ON THIS ITEM
+          </span>
+        </div>
+        {% endif %}
         <p class="lf-detail-desc">{{ product.description }}</p>
 
         <!-- ORDER FORM -->
@@ -69,12 +84,12 @@
               <label class="lf-form-label">Select Size <span class="text-danger">*</span></label>
               <div class="lf-size-btns d-flex flex-wrap gap-2 mt-2" id="sizeBtns">
                 {% for variant in variants %}
-                <input type="radio" name="size" id="size_{{ variant.size }}" value="{{ variant.size }}" 
+                <input type="radio" name="size" id="size_{{ variant.size|slugify }}" value="{{ variant.size }}" 
                        class="d-none lf-size-radio" data-stock="{{ variant.stock }}"
                        {% if variants.count == 1 and variant.stock > 0 %}checked{% endif %} 
                        {% if variant.stock <= 0 or not variant.is_available %}disabled{% endif %}
                        required>
-                <label for="size_{{ variant.size }}" 
+                <label for="size_{{ variant.size|slugify }}" 
                        class="lf-size-label {% if variants.count == 1 and variant.stock > 0 %}selected{% endif %} {% if variant.stock <= 0 or not variant.is_available %}disabled{% endif %}">
                   {{ variant.size }}
                   {% if variant.stock <= 0 or not variant.is_available %}
@@ -153,7 +168,15 @@
             </div>
             <div class="lf-product-info">
               <h3 class="lf-product-name">{{ rel.name }}</h3>
-              <p class="lf-product-price">₹{{ rel.price|floatformat:2 }}</p>
+            <div class="lf-product-price-box">
+              {% if rel.offer_price %}
+                <span class="lf-price-old">₹{{ rel.price|floatformat:0 }}</span>
+                <span class="lf-price-new">₹{{ rel.offer_price|floatformat:0 }}</span>
+                <span class="lf-badge-sale">-{{ rel.discount_percentage }}%</span>
+              {% else %}
+                <span class="lf-price-current">₹{{ rel.price|floatformat:0 }}</span>
+              {% endif %}
+            </div>
             </div>
           </div>
         </a>

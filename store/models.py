@@ -31,9 +31,11 @@ class Product(models.Model):
     name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    offer_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text="If set, this will be the selling price. The regular price will be shown as a strikethrough.")
     cost_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, help_text="Used to calculate profit")
     description = models.TextField()
     is_active = models.BooleanField(default=True)
+    is_free_shipping = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -52,6 +54,19 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def effective_price(self):
+        if self.offer_price:
+            return self.offer_price
+        return self.price
+
+    @property
+    def discount_percentage(self):
+        if self.offer_price and self.price > 0:
+            discount = ((self.price - self.offer_price) / self.price) * 100
+            return int(discount)
+        return 0
 
 
 class ProductImage(models.Model):
@@ -161,7 +176,7 @@ class CartItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
 
     def get_subtotal(self):
-        return self.product.price * self.quantity
+        return self.product.effective_price * self.quantity
 
     def __str__(self):
         return f"{self.quantity} x {self.product.name}"
@@ -174,6 +189,7 @@ class StoreSettings(models.Model):
     ]
     shipping_type = models.CharField(max_length=20, choices=SHIPPING_CHOICES, default='fixed')
     shipping_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    free_shipping_threshold = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, help_text="Orders above this amount get free shipping. Set to 0 to disable.")
 
     def __str__(self):
         return "Store Settings"

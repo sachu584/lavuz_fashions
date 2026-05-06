@@ -504,22 +504,58 @@ body {
   padding: 1rem;
 }
 
+/* Pricing Styles */
 .lf-product-name {
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: var(--lf-black);
-  margin-bottom: 0.25rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 0.92rem !important;
+  font-weight: 500 !important;
+  color: var(--lf-black) !important;
+  margin-bottom: 0.5rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  display: block !important;
 }
 
-.lf-product-price {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--lf-gold-dark);
-  margin-bottom: 0.5rem;
+/* Consolidated Pricing & Offer Styles */
+.lf-product-price-box {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-bottom: 0.75rem !important;
+  line-height: 1 !important;
 }
+
+.lf-price-old {
+  font-size: 0.85rem !important;
+  font-weight: 400 !important;
+  color: #999 !important;
+  text-decoration: line-through !important;
+  margin-right: 4px !important;
+}
+
+.lf-price-new {
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  color: #e62e2e !important; /* Red Offer Price */
+}
+
+.lf-price-current {
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  color: var(--lf-gold-dark) !important; /* Gold Regular Price */
+}
+
+.lf-badge-sale {
+  background: #e62e2e !important;
+  color: #fff !important;
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
+  padding: 2px 8px !important;
+  border-radius: 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  margin-left: 4px !important;
+}
+
 
 .lf-size-chips {
   display: flex;
@@ -607,7 +643,7 @@ body {
 .lf-detail-name {
   font-family: 'Playfair Display', serif;
   font-size: clamp(1.5rem, 2.5vw, 2rem);
-  font-weight: 700;
+  font-weight: 500;
   color: var(--lf-black);
   margin-bottom: 0.5rem;
 }
@@ -1288,3 +1324,6 @@ body {
   color: var(--lf-gold);
   font-size: 1rem;
 }
+
+
+

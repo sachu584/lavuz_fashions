@@ -148,12 +148,25 @@
             </div>
             <div class="lf-product-info">
               <h3 class="lf-product-name">{{ product.name }}</h3>
-              <p class="lf-product-price">₹{{ product.price }}</p>
+              <div class="lf-product-price-box">
+                {% if product.offer_price %}
+                <span class="lf-price-old">₹{{ product.price|floatformat:0 }}</span>
+                <span class="lf-price-new">₹{{ product.offer_price|floatformat:0 }}</span>
+                <span class="lf-badge-sale">-{{ product.discount_percentage }}%</span>
+                {% else %}
+                <span class="lf-price-current">₹{{ product.price|floatformat:0 }}</span>
+                {% endif %}
+              </div>
               <div class="lf-size-chips">
                 {% for variant in product.variants.all %}
                 <span class="lf-size-chip">{{ variant.size }}</span>
                 {% endfor %}
               </div>
+              {% if product.is_free_shipping %}
+              <div class="mt-2">
+                <span class="text-success fw-bold" style="font-size: 0.75rem;"><i class="bi bi-truck me-1"></i>Free Shipping</span>
+              </div>
+              {% endif %}
             </div>
           </div>
         </a>

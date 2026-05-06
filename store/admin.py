@@ -38,11 +38,11 @@ class ProductVariantInline(admin.TabularInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('thumbnail', 'name', 'category', 'price', 'cost_price', 'is_active', 'created_at')
-    list_filter = ('is_active', 'category')
+    list_display = ('thumbnail', 'name', 'category', 'price', 'offer_price', 'is_free_shipping', 'is_active', 'created_at')
+    list_filter = ('category', 'is_active', 'is_free_shipping', 'created_at')
     search_fields = ('name', 'description')
     prepopulated_fields = {'slug': ('name',)}
-    list_editable = ('is_active',)
+    list_editable = ('offer_price', 'is_active', 'is_free_shipping')
     inlines = [ProductImageInline, ProductVariantInline]
 
     def thumbnail(self, obj):
