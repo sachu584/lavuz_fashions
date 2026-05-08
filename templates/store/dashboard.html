@@ -187,7 +187,7 @@
                                 <td class="d-none d-md-table-cell">
                                     {% with first_item=order.items.first %}
                                     {% if first_item %}
-                                    <div class="text-dark">{{ first_item.product.name|truncatechars:25 }}</div>
+                                    <div class="text-dark"><span class="text-muted fw-normal">#{{ first_item.product.id }}</span> {{ first_item.product.name|truncatechars:25 }}</div>
                                     <div class="text-muted small">Size: {{ first_item.size }}</div>
                                     {% if order.items.count > 1 %}
                                     <div class="text-muted small fw-bold">+ {{ order.items.count|add:"-1" }} more item(s)</div>
@@ -258,7 +258,7 @@
                         </div>
                         {% endwith %}
                         <div class="flex-grow-1 min-w-0">
-                            <div class="fw-bold small text-dark text-truncate">{{ prod.name }}</div>
+                            <div class="fw-bold small text-dark text-truncate"><span class="text-muted fw-normal">#{{ prod.id }}</span> {{ prod.name }}</div>
                             <div class="text-gold small fw-bold">₹{{ prod.price|floatformat:2 }}</div>
                         </div>
                         <div class="ms-2">
