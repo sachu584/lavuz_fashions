@@ -1188,8 +1188,45 @@ body {
    ============================================= */
 @media (max-width: 767px) {
   .container, .container-fluid {
-    padding-left: 1.5rem !important;
-    padding-right: 1.5rem !important;
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+  
+  .lf-section {
+    padding: 3rem 0;
+  }
+  
+  .lf-hero {
+    height: auto;
+    min-height: 450px;
+    padding: 4rem 0;
+  }
+  
+  .lf-product-card {
+    border-radius: var(--lf-radius);
+  }
+  
+  .lf-product-info {
+    padding: 0.75rem;
+  }
+  
+  .lf-product-name {
+    font-size: 0.82rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .lf-section-title {
+    font-size: 1.5rem !important;
+  }
+  
+  .lf-hero-title {
+    font-size: 2.25rem !important;
+  }
+  
+  .lf-size-chip {
+    font-size: 0.6rem;
+    padding: 1px 5px;
   }
 }
 
@@ -1340,7 +1377,23 @@ body {
   }
 
   .lf-price-old, .lf-price-new, .lf-price-current {
-    font-size: 1.05rem !important;
+    font-size: 1rem !important;
+  }
+  
+  .lf-gallery {
+    position: relative !important;
+    top: 0 !important;
+    margin-bottom: 1.5rem;
+  }
+  
+  .lf-size-btns {
+    gap: 0.35rem;
+  }
+  
+  .lf-size-label {
+    min-width: 48px;
+    padding: 8px 10px;
+    font-size: 0.75rem;
   }
 }
 

@@ -81,7 +81,14 @@
 
           {% if variants %}
             <div class="lf-form-group mb-4">
-              <label class="lf-form-label">Select Size <span class="text-danger">*</span></label>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <label class="lf-form-label mb-0">Select Size <span class="text-danger">*</span></label>
+                {% if product.size_chart %}
+                <button type="button" class="btn btn-link p-0 text-decoration-none" data-bs-toggle="modal" data-bs-target="#sizeChartModal" style="font-size: 0.85rem; color: var(--lf-gold); font-weight: 600;">
+                  <i class="bi bi-rulers me-1"></i>Size Chart
+                </button>
+                {% endif %}
+              </div>
               <div class="lf-size-btns d-flex flex-wrap gap-2 mt-2" id="sizeBtns">
                 {% for variant in variants %}
                 <input type="radio" name="size" id="size_{{ variant.size|slugify }}" value="{{ variant.size }}" 
@@ -91,7 +98,7 @@
                        required>
                 <label for="size_{{ variant.size|slugify }}" 
                        class="lf-size-label {% if variants.count == 1 and variant.stock > 0 %}selected{% endif %} {% if variant.stock <= 0 or not variant.is_available %}disabled{% endif %}">
-                  {{ variant.size }}
+                  {{ variant.display_size }}
                   {% if variant.stock <= 0 or not variant.is_available %}
                   <small class="d-block text-danger" style="font-size: 0.6rem;">Out of Stock</small>
                   {% endif %}
@@ -182,6 +189,24 @@
         </a>
       </div>
       {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  {% if product.size_chart %}
+  <div class="modal fade" id="sizeChartModal" tabindex="-1" aria-labelledby="sizeChartModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title lf-section-title" id="sizeChartModalLabel" style="font-size: 1.5rem;">Size Chart</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center p-4">
+          <img src="{{ product.size_chart.url }}" alt="Size Chart for {{ product.name }}" class="img-fluid rounded" style="max-height: 80vh;">
+        </div>
+        <div class="modal-footer border-0 pt-0 justify-content-center">
+          <button type="button" class="btn lf-btn-gold px-4" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
     </div>
   </div>
   {% endif %}

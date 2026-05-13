@@ -33,16 +33,17 @@ class ProductImageInline(admin.TabularInline):
 class ProductVariantInline(admin.TabularInline):
     model = ProductVariant
     extra = 4
-    fields = ('size', 'stock', 'is_available')
+    fields = ('size', 'numeric_size', 'stock', 'is_available')
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('thumbnail', 'name', 'category', 'price', 'offer_price', 'is_free_shipping', 'is_active', 'created_at')
+    list_display = ('thumbnail', 'name', 'category', 'price', 'offer_price', 'has_size_chart', 'is_free_shipping', 'is_active', 'created_at')
     list_filter = ('category', 'is_active', 'is_free_shipping', 'created_at')
     search_fields = ('name', 'description')
     prepopulated_fields = {'slug': ('name',)}
     list_editable = ('offer_price', 'is_active', 'is_free_shipping')
+    fields = ('category', 'name', 'slug', 'price', 'offer_price', 'cost_price', 'description', 'size_chart', 'is_active', 'is_free_shipping')
     inlines = [ProductImageInline, ProductVariantInline]
 
     def thumbnail(self, obj):
@@ -51,6 +52,11 @@ class ProductAdmin(admin.ModelAdmin):
             return format_html('<img src="{}" style="height:50px; border-radius:4px;" />', img.image.url)
         return "—"
     thumbnail.short_description = 'Image'
+    
+    def has_size_chart(self, obj):
+        return bool(obj.size_chart)
+    has_size_chart.boolean = True
+    has_size_chart.short_description = 'Size Chart'
 
 
 @admin.register(ProductImage)
@@ -73,17 +79,33 @@ class ProductVariantAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'customer_name', 'phone', 'status', 'total_amount', 'created_at')
+    list_display = ('id', 'customer_name', 'phone', 'status', 'total_amount', 'get_product_ids', 'created_at')
     list_filter = ('status',)
     search_fields = ('customer_name', 'phone')
     list_editable = ('status',)
     readonly_fields = ('created_at', 'shipping_charge', 'total_amount')
+    
+    def get_product_ids(self, obj):
+        return ", ".join([f"#{item.product.id}" for item in obj.items.all() if item.product])
+    get_product_ids.short_description = 'Product IDs'
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0
-    readonly_fields = ('product', 'size', 'quantity', 'price', 'cost_price')
+    readonly_fields = ('get_product_image', 'get_product_id', 'product', 'size', 'quantity', 'price', 'cost_price')
     can_delete = False
+
+    def get_product_id(self, obj):
+        return f"#{obj.product.id}" if obj.product else "N/A"
+    get_product_id.short_description = 'Product ID'
+
+    def get_product_image(self, obj):
+        if obj.product:
+            img = obj.product.get_primary_image()
+            if img:
+                return format_html('<img src="{}" style="height:50px; border-radius:4px;" />', img.image.url)
+        return "—"
+    get_product_image.short_description = 'Image'
 
 # Add inline to OrderAdmin
 OrderAdmin.inlines = [OrderItemInline]

@@ -62,7 +62,7 @@ def category_detail(request, slug):
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug, is_active=True)
     images = product.images.all()
-    variants = product.variants.all()
+    variants = product.ordered_variants
     related = Product.objects.filter(category=product.category, is_active=True).exclude(id=product.id).order_by('?')[:4]
     categories = Category.objects.filter(is_active=True)
     return render(request, 'store/product_detail.html', {

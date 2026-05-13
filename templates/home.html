@@ -164,8 +164,8 @@
                 {% endif %}
               </div>
               <div class="lf-size-chips">
-                {% for variant in product.variants.all %}
-                <span class="lf-size-chip">{{ variant.size }}</span>
+                {% for variant in product.ordered_variants %}
+                <span class="lf-size-chip">{{ variant.display_size }}</span>
                 {% endfor %}
               </div>
               {% if product.is_free_shipping %}

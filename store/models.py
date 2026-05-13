@@ -2,6 +2,8 @@ from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 
+SIZE_ORDER = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'Free Size']
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -36,6 +38,7 @@ class Product(models.Model):
     description = models.TextField()
     is_active = models.BooleanField(default=True)
     is_free_shipping = models.BooleanField(default=False)
+    size_chart = models.ImageField(upload_to='size_charts/', null=True, blank=True, help_text="Size chart image for this product")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -54,6 +57,12 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def ordered_variants(self):
+        """Returns variants sorted in correct clothing size order."""
+        variants = list(self.variants.all())
+        return sorted(variants, key=lambda v: SIZE_ORDER.index(v.size) if v.size in SIZE_ORDER else 99)
 
     @property
     def effective_price(self):
@@ -84,6 +93,7 @@ class ProductImage(models.Model):
 
 class ProductVariant(models.Model):
     SIZE_CHOICES = [
+        ('XXS', 'XXS'),
         ('XS', 'XS'),
         ('S', 'S'),
         ('M', 'M'),
@@ -94,6 +104,7 @@ class ProductVariant(models.Model):
     ]
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='variants')
     size = models.CharField(max_length=10, choices=SIZE_CHOICES)
+    numeric_size = models.CharField(max_length=20, blank=True, null=True, help_text="e.g. 34, 36-38 (optional)")
     stock = models.IntegerField(default=10)
     is_available = models.BooleanField(default=True)
 
@@ -111,8 +122,14 @@ class ProductVariant(models.Model):
         unique_together = ('product', 'size')
         ordering = ['size']
 
+    @property
+    def display_size(self):
+        if self.numeric_size:
+            return f"{self.size}({self.numeric_size})"
+        return self.size
+
     def __str__(self):
-        return f"{self.product.name} - {self.size}"
+        return f"{self.product.name} - {self.display_size}"
 
 
 class Order(models.Model):
