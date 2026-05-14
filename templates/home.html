@@ -135,58 +135,64 @@
     </div>
 
     {% if featured_products %}
-    <div class="row g-3 g-md-4">
-      {% for product in featured_products %}
-      <div class="col-6 col-md-4 col-lg-3">
-        <a href="{% url 'product_detail' product.slug %}" class="lf-product-card-link">
-          <div class="lf-product-card">
-            <div class="lf-product-img-wrap">
-              {% with img=product.get_primary_image %}
-              {% if img %}
-              <img src="{{ img.image.url }}" alt="{{ product.name }}" class="lf-product-img" loading="lazy" />
-              {% else %}
-              <div class="lf-product-img-placeholder"><i class="bi bi-image"></i></div>
-              {% endif %}
-              {% endwith %}
-              {% if product.category %}
-              <span class="lf-product-badge">{{ product.category.name }}</span>
-              {% endif %}
-              <div class="lf-product-overlay">
-                <span class="lf-view-btn">View Product</span>
-              </div>
-            </div>
-            <div class="lf-product-info">
-              <h3 class="lf-product-name">{{ product.name }}</h3>
-              <div class="lf-product-price-box">
-                {% if product.offer_price %}
-                <span class="lf-price-old">₹{{ product.price|floatformat:0 }}</span>
-                <span class="lf-price-new">₹{{ product.offer_price|floatformat:0 }}</span>
-                <span class="lf-badge-sale">-{{ product.discount_percentage }}%</span>
+    <!-- Clothing Slider Wrap -->
+    <div class="clothing-slider-wrap">
+      <div class="clothing-slider-inner d-flex gap-3 pb-4">
+        {% for product in featured_products %}
+        <div class="clothing-slide-item">
+          <a href="{% url 'product_detail' product.slug %}" class="lf-product-card-link">
+            <div class="lf-product-card h-100" style="width: 240px; border: 1px solid var(--lf-border);">
+              <div class="lf-product-img-wrap" style="aspect-ratio: 3/4;">
+                {% with img=product.get_primary_image %}
+                {% if img %}
+                <img src="{{ img.image.url }}" alt="{{ product.name }}" class="lf-product-img" loading="lazy" />
                 {% else %}
-                <span class="lf-price-current">₹{{ product.price|floatformat:0 }}</span>
+                <div class="lf-product-img-placeholder"><i class="bi bi-image"></i></div>
+                {% endif %}
+                {% endwith %}
+                {% if product.category %}
+                <span class="lf-product-badge">{{ product.category.name }}</span>
+                {% endif %}
+                <div class="lf-product-overlay">
+                  <span class="lf-view-btn">View Details</span>
+                </div>
+              </div>
+              <div class="lf-product-info p-3">
+                <h3 class="lf-product-name" style="font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ product.name }}</h3>
+                <div class="lf-product-price-box">
+                  {% if product.offer_price %}
+                  <span class="lf-price-old">₹{{ product.price|floatformat:0 }}</span>
+                  <span class="lf-price-new">₹{{ product.offer_price|floatformat:0 }}</span>
+                  {% else %}
+                  <span class="lf-price-current">₹{{ product.price|floatformat:0 }}</span>
+                  {% endif %}
+                </div>
+                <div class="lf-size-chips mb-2" style="height: 22px; overflow: hidden;">
+                  {% for variant in product.ordered_variants|slice:":3" %}
+                  <span class="lf-size-chip" style="font-size: 0.6rem; padding: 1px 5px;">{{ variant.display_size }}</span>
+                  {% endfor %}
+                </div>
+                {% if product.is_free_shipping %}
+                <div class="text-success fw-bold" style="font-size: 0.65rem;"><i class="bi bi-truck me-1"></i>Free Shipping</div>
                 {% endif %}
               </div>
-              <div class="lf-size-chips">
-                {% for variant in product.ordered_variants %}
-                <span class="lf-size-chip">{{ variant.display_size }}</span>
-                {% endfor %}
-              </div>
-              {% if product.is_free_shipping %}
-              <div class="mt-2">
-                <span class="text-success fw-bold" style="font-size: 0.75rem;"><i class="bi bi-truck me-1"></i>Free Shipping</span>
-              </div>
-              {% endif %}
             </div>
-          </div>
-        </a>
+          </a>
+        </div>
+        {% endfor %}
+        
+        <!-- View All Slide -->
+        <div class="clothing-slide-item d-flex align-items-center justify-content-center" style="min-width: 160px;">
+            <a href="{% url 'product_list' %}" class="text-center text-decoration-none" style="color: var(--lf-black);">
+                <div class="mb-2" style="width: 50px; height: 50px; border: 2px solid var(--lf-black); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                    <i class="bi bi-arrow-right fs-4"></i>
+                </div>
+                <span class="fw-bold" style="font-size: 0.85rem;">Shop All</span>
+            </a>
+        </div>
       </div>
-      {% endfor %}
     </div>
-    <div class="text-center mt-5">
-      <a href="{% url 'product_list' %}" class="btn lf-btn-gold px-5 py-2">
-        View All Products <i class="bi bi-arrow-right ms-1"></i>
-      </a>
-    </div>
+    
     {% else %}
     <div class="text-center py-5 lf-empty">
       <i class="bi bi-bag-x lf-empty-icon"></i>
@@ -196,6 +202,26 @@
     {% endif %}
   </div>
 </section>
+
+<style>
+    .clothing-slider-wrap {
+        margin: 0 -15px;
+        padding: 0 15px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .clothing-slider-wrap::-webkit-scrollbar {
+        display: none;
+    }
+    .clothing-slider-inner {
+        display: flex;
+        flex-wrap: nowrap;
+    }
+    .clothing-slide-item {
+        flex: 0 0 auto;
+    }
+</style>
 
 
 <!-- ===== JEWELRY HIGHLIGHTS ===== -->
