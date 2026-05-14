@@ -75,6 +75,44 @@
         {% endif %}
         <p class="lf-detail-desc">{{ product.description }}</p>
 
+        {% if product.jewelry %}
+        <div class="jewelry-specs mb-4 p-3 rounded" style="background: #fcf9f2; border: 1px solid #eee5d1;">
+            <h6 class="text-uppercase fw-bold mb-3" style="font-size: 0.8rem; letter-spacing: 1px; color: #8a6d3b;">Jewelry Specifications</h6>
+            <div class="row g-2">
+                <div class="col-6">
+                    <div class="spec-item">
+                        <small class="text-muted d-block">Material</small>
+                        <span class="fw-medium">{% if product.jewelry.material_obj %}{{ product.jewelry.material_obj.name }}{% else %}N/A{% endif %}</span>
+                    </div>
+                </div>
+                {% if product.jewelry.purity %}
+                <div class="col-6">
+                    <div class="spec-item">
+                        <small class="text-muted d-block">Purity</small>
+                        <span class="fw-medium">{{ product.jewelry.purity }}</span>
+                    </div>
+                </div>
+                {% endif %}
+                {% if product.jewelry.weight %}
+                <div class="col-6">
+                    <div class="spec-item">
+                        <small class="text-muted d-block">Weight</small>
+                        <span class="fw-medium">{{ product.jewelry.weight }}g</span>
+                    </div>
+                </div>
+                {% endif %}
+                {% if product.jewelry.stone_type %}
+                <div class="col-6">
+                    <div class="spec-item">
+                        <small class="text-muted d-block">Stone Type</small>
+                        <span class="fw-medium">{{ product.jewelry.stone_type }}</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
         <!-- ORDER FORM -->
         <form method="POST" action="{% url 'add_to_cart' product.id %}" id="orderForm">
           {% csrf_token %}
@@ -126,8 +164,23 @@
           {% else %}
             <!-- For products like Sarees with no specific variants, default to Free Size -->
             <input type="hidden" name="size" value="Free Size">
+            {% if not product.jewelry %}
             <div class="mb-4">
               <span class="lf-badge bg-light text-dark border"><i class="bi bi-check-circle-fill me-1 text-success"></i>Size: Free Size (Standard)</span>
+            </div>
+            {% endif %}
+
+            <!-- Show Common Stock Status -->
+            <div class="mt-2">
+                {% if product.stock > 0 %}
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+                  <i class="bi bi-check2-circle me-1"></i> In Stock: {{ product.stock }} units
+                </span>
+                {% else %}
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2">
+                  <i class="bi bi-x-circle me-1"></i> Out of Stock
+                </span>
+                {% endif %}
             </div>
           {% endif %}
 
@@ -144,7 +197,9 @@
         <div class="lf-trust-badges mt-4 d-flex gap-3 flex-wrap">
           <span class="lf-badge"><i class="bi bi-truck me-1"></i>Fast Delivery</span>
           <span class="lf-badge"><i class="bi bi-shield-check me-1"></i>Genuine Product</span>
+          {% if not product.jewelry %}
           <span class="lf-badge"><i class="bi bi-arrow-repeat me-1"></i>Easy Exchange</span>
+          {% endif %}
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Category, Product, ProductImage, ProductVariant, Order, Cart, CartItem, OrderItem, StoreSettings, SpecialOffer
+from .models import Category, Product, ProductImage, ProductVariant, Order, Cart, CartItem, OrderItem, StoreSettings, SpecialOffer, Jewelry, JewelryMaterial
 from django.conf import settings
 from urllib.parse import quote
 from django.contrib.admin.views.decorators import staff_member_required
@@ -15,11 +15,16 @@ import json
 
 def home(request):
     categories = Category.objects.filter(is_active=True).order_by('?')
-    featured_products = Product.objects.filter(is_active=True).order_by('?')[:8]
+    # Fetch clothing (products that are NOT jewelry)
+    featured_products = Product.objects.filter(is_active=True).exclude(jewelry__isnull=False).order_by('?')[:8]
+    # Fetch specialized jewelry
+    featured_jewelry = Jewelry.objects.filter(is_active=True).order_by('?')[:4]
+    
     active_offer = SpecialOffer.objects.filter(is_active=True).first()
     return render(request, 'home.html', {
-        'categories': categories[:4], # Limit to 4 on home page
+        'categories': categories[:4],
         'featured_products': featured_products,
+        'featured_jewelry': featured_jewelry,
         'active_offer': active_offer,
     })
 
@@ -31,14 +36,16 @@ def category_list(request):
 
 def product_list(request):
     categories = Category.objects.filter(is_active=True)
-    products = Product.objects.filter(is_active=True).order_by('?')
+    
+    # Clothing (Exclude Jewelry) - Shop All now focuses on Clothing
+    clothing_products = Product.objects.filter(is_active=True).exclude(jewelry__isnull=False).order_by('?')
     
     query = request.GET.get('q')
     if query:
-        products = products.filter(name__icontains=query)
+        clothing_products = clothing_products.filter(name__icontains=query)
         
     return render(request, 'store/product_list.html', {
-        'products': products,
+        'clothing_products': clothing_products,
         'categories': categories,
         'query': query,
     })
@@ -46,17 +53,44 @@ def product_list(request):
 def category_detail(request, slug):
     active_category = get_object_or_404(Category, slug=slug, is_active=True)
     categories = Category.objects.filter(is_active=True)
-    products = Product.objects.filter(category=active_category, is_active=True).order_by('?')
+    
+    # Clothing and Jewelry in THIS category
+    clothing_products = Product.objects.filter(category=active_category, is_active=True).exclude(jewelry__isnull=False).order_by('?')
+    jewelry_products = Jewelry.objects.filter(category=active_category, is_active=True).order_by('?')
     
     query = request.GET.get('q')
     if query:
-        products = products.filter(name__icontains=query)
+        clothing_products = clothing_products.filter(name__icontains=query)
+        jewelry_products = jewelry_products.filter(name__icontains=query)
 
     return render(request, 'store/product_list.html', {
-        'products': products,
+        'clothing_products': clothing_products,
+        'jewelry_products': jewelry_products,
         'categories': categories,
         'active_category': active_category,
         'query': query,
+    })
+
+def jewelry_list(request):
+    categories = Category.objects.filter(is_active=True)
+    materials = JewelryMaterial.objects.all()
+    jewelry_items = Jewelry.objects.filter(is_active=True).order_by('?')
+    
+    # Specific Jewelry Filters
+    selected_material_id = request.GET.get('material')
+    if selected_material_id:
+        jewelry_items = jewelry_items.filter(material_obj_id=selected_material_id)
+        
+    query = request.GET.get('q')
+    if query:
+        jewelry_items = jewelry_items.filter(name__icontains=query)
+        
+    return render(request, 'store/jewelry_list.html', {
+        'jewelry_items': jewelry_items,
+        'categories': categories,
+        'materials': materials,
+        'query': query,
+        'selected_material_id': selected_material_id,
     })
 
 def product_detail(request, slug):
@@ -127,16 +161,21 @@ def add_to_cart(request, product_id):
         cart = _get_or_create_cart(request)
         variant = product.variants.filter(size=size).first()
         
+        # Calculate total quantity if item already in cart
+        current_cart_item = cart.items.filter(product=product, variant=variant).first()
+        requested_total = quantity
+        if current_cart_item:
+            requested_total += current_cart_item.quantity
+
         # Stock Validation
         if variant:
-            # Calculate total quantity if item already in cart
-            current_cart_item = cart.items.filter(product=product, variant=variant).first()
-            requested_total = quantity
-            if current_cart_item:
-                requested_total += current_cart_item.quantity
-                
             if requested_total > variant.stock:
-                messages.error(request, f"Sorry, only {variant.stock} units of {product.name} ({size}) are available.")
+                messages.error(request, f"Only {variant.stock} units of {product.name} ({size}) are available.")
+                return redirect('product_detail', slug=product.slug)
+        else:
+            # Common Stock Fallback (if no variants exist)
+            if requested_total > product.stock:
+                messages.error(request, f"Only {product.stock} units of {product.name} are available.")
                 return redirect('product_detail', slug=product.slug)
         
         cart_item, created = CartItem.objects.get_or_create(

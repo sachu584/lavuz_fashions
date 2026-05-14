@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Category, Product, ProductImage, ProductVariant, Order, OrderItem, StoreSettings, SpecialOffer
+from .models import Category, Product, ProductImage, ProductVariant, Order, OrderItem, StoreSettings, SpecialOffer, Jewelry, JewelryMaterial
 
 
 @admin.register(Category)
@@ -38,11 +38,11 @@ class ProductVariantInline(admin.TabularInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('thumbnail', 'name', 'category', 'price', 'offer_price', 'has_size_chart', 'is_free_shipping', 'is_active', 'created_at')
+    list_display = ('thumbnail', 'name', 'category', 'price', 'offer_price', 'stock', 'is_free_shipping', 'is_active', 'created_at')
     list_filter = ('category', 'is_active', 'is_free_shipping', 'created_at')
     search_fields = ('name', 'description')
     prepopulated_fields = {'slug': ('name',)}
-    list_editable = ('offer_price', 'is_active', 'is_free_shipping')
+    list_editable = ('offer_price', 'stock', 'is_free_shipping', 'is_active')
     fields = ('category', 'name', 'slug', 'price', 'offer_price', 'cost_price', 'description', 'size_chart', 'is_active', 'is_free_shipping')
     inlines = [ProductImageInline, ProductVariantInline]
 
@@ -57,6 +57,23 @@ class ProductAdmin(admin.ModelAdmin):
         return bool(obj.size_chart)
     has_size_chart.boolean = True
     has_size_chart.short_description = 'Size Chart'
+
+
+@admin.register(JewelryMaterial)
+class JewelryMaterialAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+
+
+@admin.register(Jewelry)
+class JewelryAdmin(ProductAdmin):
+    list_display = ('thumbnail', 'name', 'material_obj', 'purity', 'price', 'offer_price', 'stock', 'is_free_shipping', 'is_active', 'created_at')
+    list_filter = ('material_obj', 'is_active', 'is_exclusive', 'created_at')
+    fields = (
+        'category', 'name', 'slug', 'price', 'offer_price', 'cost_price', 
+        'material_obj', 'purity', 'weight', 'stone_type', 'is_exclusive',
+        'stock', 'description', 'size_chart', 'is_active', 'is_free_shipping'
+    )
 
 
 @admin.register(ProductImage)

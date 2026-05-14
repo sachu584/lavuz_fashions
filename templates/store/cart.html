@@ -42,7 +42,15 @@
                                             {% endif %}
                                             <div class="ms-2 ms-md-3">
                                                 <h6 class="mb-0 fw-semibold" style="font-size: 0.9rem;">{{ item.product.name }}</h6>
-                                                <small class="text-muted" style="font-size: 0.75rem;">Size: {{ item.variant.display_size|default:"Free Size" }}</small>
+                                                <div class="d-flex flex-column">
+                                                    <small class="text-muted" style="font-size: 0.75rem;">Size: {{ item.variant.display_size|default:"Free Size" }}</small>
+                                                    {% if item.product.jewelry %}
+                                                    <small class="text-gold fw-semibold" style="font-size: 0.75rem;">
+                                                        {% if item.product.jewelry.material_obj %}{{ item.product.jewelry.material_obj.name }}{% endif %}
+                                                        {% if item.product.jewelry.purity %}({{ item.product.jewelry.purity }}){% endif %}
+                                                    </small>
+                                                    {% endif %}
+                                                </div>
                                                 <!-- Mobile only price/total -->
                                                 <div class="d-md-none mt-1" style="line-height: 1.2;">
                                                     <div class="text-muted" style="font-size: 0.75rem;">Price: Rs. {{ item.product.effective_price|floatformat:0 }}</div>

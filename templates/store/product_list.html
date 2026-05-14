@@ -58,70 +58,88 @@
     {% if active_category %}in <strong>{{ active_category.name }}</strong>{% endif %}
   </p>
 
-  {% if products %}
-  <div class="row g-3 g-md-4">
-    {% for product in products %}
-    <div class="col-6 col-md-4 col-lg-3">
-      <a href="{% url 'product_detail' product.slug %}" class="lf-product-card-link">
-        <div class="lf-product-card">
-          <div class="lf-product-img-wrap">
-            {% with img=product.get_primary_image %}
-            {% if img %}
-            <img src="{{ img.image.url }}" alt="{{ product.name }}" class="lf-product-img" loading="lazy" />
-            {% else %}
-            <div class="lf-product-img-placeholder"><i class="bi bi-image"></i></div>
-            {% endif %}
-            {% endwith %}
-            {% if product.category %}
-            <span class="lf-product-badge">{{ product.category.name }}</span>
-            {% endif %}
-            <div class="lf-product-overlay">
-              <span class="lf-view-btn">View Product</span>
-            </div>
-          </div>
-          <div class="lf-product-info">
-            <h3 class="lf-product-name">{{ product.name }}</h3>
-            <div class="lf-product-price-box">
-              {% if product.offer_price %}
-              <span class="lf-price-old">₹{{ product.price|floatformat:0 }}</span>
-              <span class="lf-price-new">₹{{ product.offer_price|floatformat:0 }}</span>
-              <span class="lf-badge-sale">-{{ product.discount_percentage }}%</span>
-              {% else %}
-              <span class="lf-price-current">₹{{ product.price|floatformat:0 }}</span>
-              {% endif %}
-            </div>
-            <div class="lf-size-chips">
-              {% for variant in product.ordered_variants %}
-              <span class="lf-size-chip">{{ variant.display_size }}</span>
-              {% endfor %}
-            </div>
-            {% if product.is_free_shipping %}
-            <div class="mt-2">
-              <span class="text-success fw-bold" style="font-size: 0.75rem;"><i class="bi bi-truck me-1"></i>Free Shipping</span>
-            </div>
-            {% endif %}
-          </div>
-        </div>
-      </a>
+  <!-- ===== CLOTHING SECTION ===== -->
+  <div class="lf-shop-section mb-5">
+    <div class="d-flex align-items-center mb-4">
+        <h2 class="lf-section-title mb-0" style="font-size: 1.5rem;">Clothing</h2>
+        <div class="flex-grow-1 ms-3" style="height: 1px; background: #eee;"></div>
+        <span class="ms-3 text-muted" style="font-size: 0.8rem;">{{ clothing_products|length }} items</span>
     </div>
-    {% endfor %}
+
+    {% if clothing_products %}
+    <div class="row g-3 g-md-4">
+      {% for product in clothing_products %}
+      <div class="col-6 col-md-4 col-lg-3">
+        <a href="{% url 'product_detail' product.slug %}" class="lf-product-card-link">
+          <div class="lf-product-card">
+            <div class="lf-product-img-wrap">
+              {% with img=product.get_primary_image %}
+              {% if img %}
+              <img src="{{ img.image.url }}" alt="{{ product.name }}" class="lf-product-img" loading="lazy" />
+              {% else %}
+              <div class="lf-product-img-placeholder"><i class="bi bi-image"></i></div>
+              {% endif %}
+              {% endwith %}
+              {% if product.category %}
+              <span class="lf-product-badge">{{ product.category.name }}</span>
+              {% endif %}
+              <div class="lf-product-overlay">
+                <span class="lf-view-btn">View Product</span>
+              </div>
+            </div>
+            <div class="lf-product-info">
+              <h3 class="lf-product-name">{{ product.name }}</h3>
+              <div class="lf-product-price-box">
+                {% if product.offer_price %}
+                <span class="lf-price-old">₹{{ product.price|floatformat:0 }}</span>
+                <span class="lf-price-new">₹{{ product.offer_price|floatformat:0 }}</span>
+                {% else %}
+                <span class="lf-price-current">₹{{ product.price|floatformat:0 }}</span>
+                {% endif %}
+              </div>
+              <div class="lf-size-chips">
+                {% for variant in product.ordered_variants %}
+                <span class="lf-size-chip">{{ variant.display_size }}</span>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center text-muted py-4">No clothing items found.</p>
+    {% endif %}
   </div>
-  {% else %}
-  <div class="text-center py-5 lf-empty">
-    <i class="bi bi-bag-x lf-empty-icon"></i>
-    <h3>No products found</h3>
-    <p class="text-muted">
-      {% if active_category %}
-      No products in <strong>{{ active_category.name }}</strong> yet. Check back soon!
-      {% else %}
-      New arrivals coming soon. Follow us on Instagram!
-      {% endif %}
-    </p>
-    <a href="{% url 'product_list' %}" class="btn lf-btn-gold mt-3 px-4">View All Products</a>
+
+  <!-- ===== JEWELRY REDIRECT BANNER ===== -->
+  <div class="jewelry-teaser-banner rounded-4 overflow-hidden mb-5 p-0 position-relative">
+    <div class="row g-0 align-items-center" style="background: #fffaf0; border: 1px solid #eee5d1;">
+        <div class="col-md-7 p-4 p-lg-5">
+            <p class="lf-section-tag mb-2" style="color: #d4af37;">Complete Your Look</p>
+            <h2 class="lf-section-title mb-3" style="font-size: 2rem; color: #8a6d3b;">Jewelry Collection</h2>
+            <p class="text-muted mb-4" style="max-width: 400px;">Discover our handpicked selection of elegant gold, silver, and fashion jewelry designed to complement your style.</p>
+            <a href="{% url 'jewelry_list' %}" class="btn px-4 py-2" style="background: #d4af37; color: #fff; font-weight: 700; border-radius: 4px;">
+                Explore Collection <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+        <div class="col-md-5 d-none d-md-block text-center p-4">
+            <i class="bi bi-gem" style="font-size: 8rem; color: rgba(212, 175, 55, 0.1);"></i>
+        </div>
+    </div>
   </div>
-  {% endif %}
 
 </div>
+
+<style>
+    .jewelry-teaser-banner {
+        transition: transform 0.3s ease;
+    }
+    .jewelry-teaser-banner:hover {
+        transform: translateY(-5px);
+    }
+</style>
 {% endblock %}
 
 

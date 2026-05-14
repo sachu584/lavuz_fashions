@@ -2,7 +2,12 @@ from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 
-SIZE_ORDER = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'Free Size']
+SIZE_ORDER = [
+    'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 
+    '6', '7', '8', '9', '10', '11', '12', # Ring sizes
+    '2.2', '2.4', '2.6', '2.8', # Bangle sizes
+    'Free Size'
+]
 
 
 class Category(models.Model):
@@ -39,6 +44,7 @@ class Product(models.Model):
     is_active = models.BooleanField(default=True)
     is_free_shipping = models.BooleanField(default=False)
     size_chart = models.ImageField(upload_to='size_charts/', null=True, blank=True, help_text="Size chart image for this product")
+    stock = models.IntegerField(default=0, help_text="Total stock for one-size items. If using variants, this will be ignored.")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -93,17 +99,17 @@ class ProductImage(models.Model):
 
 class ProductVariant(models.Model):
     SIZE_CHOICES = [
-        ('XXS', 'XXS'),
-        ('XS', 'XS'),
-        ('S', 'S'),
-        ('M', 'M'),
-        ('L', 'L'),
-        ('XL', 'XL'),
-        ('XXL', 'XXL'),
+        ('XXS', 'XXS'), ('XS', 'XS'), ('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL'), ('XXL', 'XXL'),
+        ('6', 'Ring Size 6'), ('7', 'Ring Size 7'), ('8', 'Ring Size 8'), ('9', 'Ring Size 9'), ('10', 'Ring Size 10'),
+        ('11', 'Ring Size 11'), ('12', 'Ring Size 12'),
+        ('2.2', 'Bangle 2.2'), ('2.4', 'Bangle 2.4'), ('2.6', 'Bangle 2.6'), ('2.8', 'Bangle 2.8'),
         ('Free Size', 'Free Size'),
     ]
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='variants')
-    size = models.CharField(max_length=10, choices=SIZE_CHOICES)
+    size = models.CharField(
+        max_length=20, 
+        help_text="Standard: XXS-XXL, 6-12 (Ring), 2.2-2.8 (Bangle). You can also type custom sizes."
+    )
     numeric_size = models.CharField(max_length=20, blank=True, null=True, help_text="e.g. 34, 36-38 (optional)")
     stock = models.IntegerField(default=10)
     is_available = models.BooleanField(default=True)
@@ -235,3 +241,24 @@ class SpecialOffer(models.Model):
 
     class Meta:
         verbose_name_plural = "Special Offers"
+
+
+class JewelryMaterial(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "Jewelry Materials"
+
+
+class Jewelry(Product):
+    material_obj = models.ForeignKey(JewelryMaterial, on_delete=models.SET_NULL, null=True, blank=True, related_name='jewelry_items', verbose_name="Material")
+    purity = models.CharField(max_length=50, blank=True, help_text="e.g. 22K, 18K, 925 Sterling")
+    weight = models.DecimalField(max_digits=10, decimal_places=3, null=True, blank=True, help_text="Weight in grams")
+    stone_type = models.CharField(max_length=100, blank=True)
+    is_exclusive = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name_plural = "Jewelry Items"

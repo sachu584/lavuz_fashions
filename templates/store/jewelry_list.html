@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Jewelry Collection – Lavus Fashions{% endblock %}
+
+{% block content %}
+<div class="container lf-section">
+
+  <!-- Page Header -->
+  <div class="lf-page-header text-center mb-4">
+    <p class="lf-section-tag">Elegant & Timeless</p>
+    <h1 class="lf-section-title">Jewelry Collection</h1>
+    <div class="lf-divider mx-auto"></div>
+    <p class="text-muted mt-3 mb-0">Discover our curated selection of fine and fashion jewelry.</p>
+  </div>
+
+  <!-- Search & Filter Bar -->
+  <div class="row justify-content-center mb-4 g-3">
+    <div class="col-md-5 col-lg-4">
+      <form action="{% url 'jewelry_list' %}" method="get" class="lf-search-form">
+        <div class="input-group">
+          <input type="text" name="q" class="form-control lf-search-input" placeholder="Search jewelry..." value="{{ query|default:'' }}">
+          <button class="btn lf-btn-gold" type="submit">
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Material Filter -->
+    <div class="col-md-3 col-lg-2">
+      <div class="dropdown">
+        <button class="btn btn-outline-dark dropdown-toggle w-100" type="button" id="materialFilter" data-bs-toggle="dropdown" aria-expanded="false">
+          {% if selected_material_id %}
+            {% for m in materials %}{% if m.id|stringformat:"s" == selected_material_id %}{{ m.name }}{% endif %}{% endfor %}
+          {% else %}
+            All Materials
+          {% endif %}
+        </button>
+        <ul class="dropdown-menu w-100" aria-labelledby="materialFilter">
+          <li><a class="dropdown-item" href="{% url 'jewelry_list' %}">All Materials</a></li>
+          <li><hr class="dropdown-divider"></li>
+          {% for m in materials %}
+          <li><a class="dropdown-item" href="?material={{ m.id }}">{{ m.name }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Jewelry count -->
+  <p class="text-muted text-center mb-4" style="font-size:0.88rem;">
+    {{ jewelry_items|length }} item{{ jewelry_items|length|pluralize }} found
+  </p>
+
+  {% if jewelry_items %}
+  <div class="row g-3 g-md-4">
+    {% for item in jewelry_items %}
+    <div class="col-6 col-md-4 col-lg-3">
+      <a href="{% url 'product_detail' item.slug %}" class="lf-product-card-link">
+        <div class="lf-product-card jewelry-card">
+          <div class="lf-product-img-wrap">
+            {% with img=item.get_primary_image %}
+            {% if img %}
+            <img src="{{ img.image.url }}" alt="{{ item.name }}" class="lf-product-img" loading="lazy" />
+            {% else %}
+            <div class="lf-product-img-placeholder"><i class="bi bi-gem"></i></div>
+            {% endif %}
+            {% endwith %}
+            
+            {% if item.is_exclusive %}
+            <span class="lf-product-badge bg-dark">Exclusive</span>
+            {% elif item.material_obj %}
+            <span class="lf-product-badge">{{ item.material_obj.name }}</span>
+            {% endif %}
+            
+            <div class="lf-product-overlay">
+              <span class="lf-view-btn">Details</span>
+            </div>
+          </div>
+          <div class="lf-product-info">
+            <h3 class="lf-product-name">{{ item.name }}</h3>
+            
+            <div class="jewelry-meta mb-2" style="font-size: 0.75rem; color: #888;">
+                {% if item.purity %}<span class="me-2"><i class="bi bi-shield-check"></i> {{ item.purity }}</span>{% endif %}
+                {% if item.weight %}<span><i class="bi bi-speedometer2"></i> {{ item.weight }}g</span>{% endif %}
+            </div>
+
+            <div class="lf-product-price-box">
+              {% if item.offer_price %}
+              <span class="lf-price-old">₹{{ item.price|floatformat:0 }}</span>
+              <span class="lf-price-new">₹{{ item.offer_price|floatformat:0 }}</span>
+              <span class="lf-badge-sale">-{{ item.discount_percentage }}%</span>
+              {% else %}
+              <span class="lf-price-current">₹{{ item.price|floatformat:0 }}</span>
+              {% endif %}
+            </div>
+            
+            {% if item.is_free_shipping %}
+            <div class="mt-2">
+              <span class="text-success fw-bold" style="font-size: 0.75rem;"><i class="bi bi-truck me-1"></i>Free Shipping</span>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-5 lf-empty">
+    <i class="bi bi-gem lf-empty-icon"></i>
+    <h3>No jewelry items found</h3>
+    <p class="text-muted">
+      New arrivals coming soon. Check back often for the latest collections!
+    </p>
+    <a href="{% url 'jewelry_list' %}" class="btn lf-btn-gold mt-3 px-4">View All Jewelry</a>
+  </div>
+  {% endif %}
+
+</div>
+
+<style>
+    .jewelry-card {
+        border: 1px solid #f0f0f0;
+        transition: all 0.3s ease;
+    }
+    .jewelry-card:hover {
+        border-color: #d4af37;
+        box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1);
+    }
+    .bi-gem {
+        color: #d4af37;
+    }
+</style>
+{% endblock %}
