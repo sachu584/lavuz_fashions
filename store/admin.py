@@ -20,14 +20,16 @@ class CategoryAdmin(admin.ModelAdmin):
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 3
-    fields = ('image', 'is_primary', 'order', 'image_preview')
-    readonly_fields = ('image_preview',)
+    fields = ('media_type', 'image', 'video', 'is_primary', 'order', 'preview')
+    readonly_fields = ('preview',)
 
-    def image_preview(self, obj):
+    def preview(self, obj):
+        if obj.media_type == 'video' and obj.video:
+            return format_html('<video src="{}" style="height:80px; border-radius:6px;" muted loop></video>', obj.video.url)
         if obj.image:
             return format_html('<img src="{}" style="height:80px; border-radius:6px;" />', obj.image.url)
-        return "No Image"
-    image_preview.short_description = 'Preview'
+        return "No Media"
+    preview.short_description = 'Preview'
 
 
 class ProductVariantInline(admin.TabularInline):
@@ -78,14 +80,16 @@ class JewelryAdmin(ProductAdmin):
 
 @admin.register(ProductImage)
 class ProductImageAdmin(admin.ModelAdmin):
-    list_display = ('product', 'is_primary', 'order', 'image_preview')
-    list_filter = ('is_primary',)
+    list_display = ('product', 'media_type', 'is_primary', 'order', 'preview')
+    list_filter = ('media_type', 'is_primary')
 
-    def image_preview(self, obj):
+    def preview(self, obj):
+        if obj.media_type == 'video' and obj.video:
+            return format_html('<video src="{}" style="height:60px; border-radius:4px;" muted loop></video>', obj.video.url)
         if obj.image:
             return format_html('<img src="{}" style="height:60px; border-radius:4px;" />', obj.image.url)
         return "—"
-    image_preview.short_description = 'Preview'
+    preview.short_description = 'Preview'
 
 
 @admin.register(ProductVariant)

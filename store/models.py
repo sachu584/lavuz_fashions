@@ -85,8 +85,14 @@ class Product(models.Model):
 
 
 class ProductImage(models.Model):
+    MEDIA_CHOICES = [
+        ('image', 'Image'),
+        ('video', 'Video'),
+    ]
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='products/')
+    image = models.ImageField(upload_to='products/', null=True, blank=True)
+    video = models.FileField(upload_to='products/videos/', null=True, blank=True, help_text="Upload a short product video (MP4 recommended)")
+    media_type = models.CharField(max_length=10, choices=MEDIA_CHOICES, default='image')
     is_primary = models.BooleanField(default=False)
     order = models.IntegerField(default=0)
 

@@ -19,6 +19,9 @@
     <div class="col-md-5 col-lg-4">
       <form action="{% url 'jewelry_list' %}" method="get" class="lf-search-form">
         <div class="input-group">
+          {% if selected_material_id %}
+          <input type="hidden" name="material" value="{{ selected_material_id }}">
+          {% endif %}
           <input type="text" name="q" class="form-control lf-search-input" placeholder="Search jewelry..." value="{{ query|default:'' }}">
           <button class="btn lf-btn-gold" type="submit">
             <i class="bi bi-search"></i>
@@ -32,16 +35,16 @@
       <div class="dropdown">
         <button class="btn btn-outline-dark dropdown-toggle w-100" type="button" id="materialFilter" data-bs-toggle="dropdown" aria-expanded="false">
           {% if selected_material_id %}
-            {% for m in materials %}{% if m.id|stringformat:"s" == selected_material_id %}{{ m.name }}{% endif %}{% endfor %}
+            {% for m in materials %}{% if m.id|stringformat:"s" == selected_material_id %}{{ m.name|title }}{% endif %}{% endfor %}
           {% else %}
             All Materials
           {% endif %}
         </button>
         <ul class="dropdown-menu w-100" aria-labelledby="materialFilter">
-          <li><a class="dropdown-item" href="{% url 'jewelry_list' %}">All Materials</a></li>
+          <li><a class="dropdown-item" href="{% url 'jewelry_list' %}{% if query %}?q={{ query }}{% endif %}">All Materials</a></li>
           <li><hr class="dropdown-divider"></li>
           {% for m in materials %}
-          <li><a class="dropdown-item" href="?material={{ m.id }}">{{ m.name }}</a></li>
+          <li><a class="dropdown-item" href="?material={{ m.id }}{% if query %}&q={{ query }}{% endif %}">{{ m.name|title }}</a></li>
           {% endfor %}
         </ul>
       </div>
@@ -70,8 +73,10 @@
             
             {% if item.is_exclusive %}
             <span class="lf-product-badge bg-dark">Exclusive</span>
-            {% elif item.material_obj %}
-            <span class="lf-product-badge">{{ item.material_obj.name }}</span>
+            {% endif %}
+            
+            {% if item.material_obj %}
+            <span class="lf-product-badge jewelry-badge-right">{{ item.material_obj.name|title }}</span>
             {% endif %}
             
             <div class="lf-product-overlay">
@@ -82,6 +87,7 @@
             <h3 class="lf-product-name">{{ item.name }}</h3>
             
             <div class="jewelry-meta mb-2" style="font-size: 0.75rem; color: #888;">
+                {% if item.material_obj %}<span class="me-2"><i class="bi bi-gem"></i> {{ item.material_obj.name|title }}</span>{% endif %}
                 {% if item.purity %}<span class="me-2"><i class="bi bi-shield-check"></i> {{ item.purity }}</span>{% endif %}
                 {% if item.weight %}<span><i class="bi bi-speedometer2"></i> {{ item.weight }}g</span>{% endif %}
             </div>
@@ -131,6 +137,26 @@
     }
     .bi-gem {
         color: #d4af37;
+    }
+    
+    /* Handle long material names in filter button */
+    #materialFilter {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-right: 30px;
+        text-align: left;
+    }
+    
+    /* Jewelry Specific Badge - Top Right */
+    .jewelry-badge-right {
+        background: #d4af37 !important;
+        left: auto !important;
+        right: 10px;
+        max-width: 50%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 </style>
 {% endblock %}

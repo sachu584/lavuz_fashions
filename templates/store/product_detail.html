@@ -23,22 +23,35 @@
     <!-- ===== IMAGE GALLERY ===== -->
     <div class="col-md-6 col-lg-7">
       <div class="lf-gallery">
-        <div class="lf-main-img-wrap mb-3">
+        <div class="lf-main-img-wrap mb-3" id="mainMediaContainer">
           {% with img=product.get_primary_image %}
           <img
             id="mainImage"
-            src="{% if img %}{{ img.image.url }}{% else %}{% static 'images/placeholder.png' %}{% endif %}"
+            src="{% if img and img.image %}{{ img.image.url }}{% elif not img %}{% static 'images/placeholder.png' %}{% endif %}"
             alt="{{ product.name }}"
-            class="lf-main-img"
+            class="lf-main-img {% if img.media_type == 'video' %}d-none{% endif %}"
           />
+          <video
+            id="mainVideo"
+            src="{% if img and img.media_type == 'video' %}{{ img.video.url }}{% endif %}"
+            class="lf-main-img {% if img.media_type != 'video' %}d-none{% endif %}"
+            autoplay muted loop playsinline
+          ></video>
           {% endwith %}
         </div>
         {% if images.count > 1 %}
         <div class="lf-thumbs d-flex gap-2 flex-wrap">
-          {% for image in images %}
-          <button class="lf-thumb-btn {% if image.is_primary %}active{% endif %}"
-            onclick="switchImage(this, '{{ image.image.url }}')" aria-label="View image {{ forloop.counter }}">
-            <img src="{{ image.image.url }}" alt="{{ product.name }} view {{ forloop.counter }}" class="lf-thumb-img" />
+          {% for img in images %}
+          <button class="lf-thumb-btn {% if img.is_primary %}active{% endif %} position-relative"
+            onclick="switchMedia(this, '{{ img.media_type }}', '{% if img.image %}{{ img.image.url }}{% endif %}', '{% if img.video %}{{ img.video.url }}{% endif %}')" 
+            aria-label="View {{ img.media_type }} {{ forloop.counter }}">
+            {% if img.media_type == 'video' %}
+            <div class="position-absolute top-50 start-50 translate-middle z-1">
+                <i class="bi bi-play-circle-fill text-white fs-4 shadow-sm"></i>
+            </div>
+            {% endif %}
+            <img src="{% if img.image %}{{ img.image.url }}{% else %}{% static 'images/video-placeholder.png' %}{% endif %}" 
+                 alt="{{ product.name }} view {{ forloop.counter }}" class="lf-thumb-img" />
           </button>
           {% endfor %}
         </div>
@@ -204,7 +217,7 @@
       </div>
     </div>
   </div>
-
+  
   <!-- ===== RELATED PRODUCTS ===== -->
   {% if related %}
   <div class="lf-related mt-5 pt-4">
@@ -271,8 +284,22 @@
 
 {% block extra_js %}
 <script>
-  function switchImage(btn, url) {
-    document.getElementById('mainImage').src = url;
+  function switchMedia(btn, type, imageUrl, videoUrl) {
+    const mainImg = document.getElementById('mainImage');
+    const mainVid = document.getElementById('mainVideo');
+    
+    if (type === 'video') {
+        mainImg.classList.add('d-none');
+        mainVid.classList.remove('d-none');
+        mainVid.src = videoUrl;
+        mainVid.play();
+    } else {
+        mainVid.classList.add('d-none');
+        mainVid.pause();
+        mainImg.classList.remove('d-none');
+        mainImg.src = imageUrl;
+    }
+    
     document.querySelectorAll('.lf-thumb-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
   }
