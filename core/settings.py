@@ -7,12 +7,12 @@ SECRET_KEY = 'django-lavus-fashions-secret-key-change-in-production'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['lavuz.pythonanywhere.com', 'www.lavuzfearlessfashion.shop', 'lavuzfearlessfashion.shop', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['lavuz.pythonanywhere.com', 'www.lasaatelier.shop', 'lasaatelier.shop', 'localhost', '127.0.0.1']
 
 CSRF_TRUSTED_ORIGINS = [
     'https://lavuz.pythonanywhere.com',
-    'https://www.lavuzfearlessfashion.shop',
-    'https://lavuzfearlessfashion.shop'
+    'https://www.lasaatelier.shop',
+    'https://lasaatelier.shop'
 ]
 
 INSTALLED_APPS = [

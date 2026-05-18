@@ -142,6 +142,6 @@ class StoreSettingsAdmin(admin.ModelAdmin):
     list_display = ('shipping_type', 'shipping_amount')
 
 # Customize admin site
-admin.site.site_header = "Lavauz Fashions Admin"
-admin.site.site_title = "Lavauz Fashions"
-admin.site.index_title = "Welcome to Lavauz Fashions Dashboard"
+admin.site.site_header = "Lasaatelier Admin"
+admin.site.site_title = "Lasaatelier"
+admin.site.index_title = "Welcome to Lasaatelier Dashboard"

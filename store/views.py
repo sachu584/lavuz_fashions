@@ -335,7 +335,7 @@ def checkout(request):
         
         items_str = "\n".join(items_details)
         message = (
-            f"New Order - Lavauz Fashions\n"
+            f"New Order - Lasaatelier\n"
             f"Order ID: #{order.id}\n\n"
             f"Items:\n{items_str}\n\n"
             f"Subtotal: Rs.{subtotal}\n"
@@ -441,7 +441,7 @@ def register(request):
             user = form.save()
             _merge_cart(request, user)
             login(request, user)
-            messages.success(request, "Registration successful! Welcome to Lavauz Fashions.")
+            messages.success(request, "Registration successful! Welcome to Lasaatelier.")
             return redirect('home')
     else:
         form = UserCreationForm()
