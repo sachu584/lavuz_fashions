@@ -235,7 +235,11 @@
                             <span class="small text-muted">{{ cat.prod_count }}</span>
                         </div>
                         <div class="progress" style="height: 6px;">
-                            <div class="progress-bar" role="progressbar" style="width: {{ cat.prod_count }}0%; background: var(--lf-gold);" aria-valuenow="{{ cat.prod_count }}" aria-valuemin="0" aria-valuemax="10"></div>
+                            {% with pct=cat.prod_count|stringformat:"s" %}
+                            <div class="progress-bar" role="progressbar"
+                                style="width: {{ cat.prod_count }}0%; max-width: 100%; background: var(--lf-gold);"
+                                aria-valuenow="{{ cat.prod_count }}" aria-valuemin="0" aria-valuemax="10"></div>
+                            {% endwith %}
                         </div>
                     </div>
                     {% endfor %}
